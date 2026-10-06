@@ -64,7 +64,7 @@ This lab runs on a **reduced environment below the Epic's Profile B minimum**.
 
 | Sub-task | Description | Status | Doc |
 |---|---|---|---|
-| DEV-905 | Set up repo, pin versions, build lab | 🟡 In Progress | [docs/01-setup](docs/01-setup/) |
+| DEV-905 | Set up repo, pin versions, build lab | 🟢 Done | [docs/01-setup](docs/01-setup/) |
 | DEV-906 | Seed test data + verification toolkit | ⚪ Not started | — |
 | DEV-907 | MinIO feature validation | ⚪ Not started | — |
 | DEV-908 | MinIO distributed mode (resilience, healing) | ⛔ Out of scope | — |
@@ -109,7 +109,7 @@ This lab runs on a **reduced environment below the Epic's Profile B minimum**.
 - Docker Engine 29.x
 - Docker Compose v2.x
 - At least 4 CPUs, 4 GiB RAM, 80 GB free disk
-- `mc` client (optional, runs in container too)
+- `mc` client (optional — runs in container too)
 
 ### Steps
 
@@ -127,7 +127,7 @@ sudo mkdir -p /data/minio/{data1,data2,data3,data4}
 sudo chown -R 1000:1000 /data/minio
 
 # 4. Start the lab
-docker compose --env-file .env -f compose/minio.yml up -d
+./scripts/up.sh
 
 # 5. Verify
 docker compose --env-file .env -f compose/minio.yml ps
