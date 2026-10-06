@@ -1,86 +1,175 @@
 # MinIO vs Silo — Feature-by-Feature Evaluation
 
 **Jira Epic:** DEV-904
-**Project Board:** https://github.com/users/ThanushaBai/projects/6
-**Owner:** ThanushaBai
+**Project Board:** [View board](https://github.com/users/ThanushaBai/projects/6)
+**Repo Owner:** ThanushaBai
+**Started:** 2026-10-06
+
+---
 
 ## Purpose
 
-Upstream MinIO Community Edition was archived on 2026-04-25 and receives no further
-security patches. **Silo** (`pgsty/silo`) is a community-maintained MinIO fork by the
-Pigsty project, positioned as a near drop-in replacement.
+Upstream **MinIO Community Edition** was archived (read-only) on **2026-04-25**. It receives no further releases or security patches.
 
-This repo evaluates whether Silo is a functional replacement for the last open-source
-MinIO — feature by feature, with side-by-side evidence — before any switch is considered.
+**Silo** ([`pgsty/silo`](https://github.com/pgsty/silo)) is a community-maintained MinIO fork by the Pigsty project, positioned as a near drop-in replacement. It keeps:
+
+- The same S3 API surface and `mc`-style tooling (plus its own `mcli`)
+- The same `MINIO_*` environment variables and `minio_*` Prometheus metrics
+- The same on-disk format (`.minio.sys`)
+
+Silo describes itself as a **conditional** drop-in — compatibility is best-effort, and eight conditions (**O01–O08**) must be checked before switching.
+
+This repository is a **local proof-of-concept lab** that evaluates whether Silo is a **functional replacement** for the last open-source MinIO, feature by feature, backed by side-by-side evidence.
+
+---
 
 ## Scope
 
-- **In scope:** S3 API compatibility, features, versioning, object lock, lifecycle,
-  client compatibility, security/license review, indicative benchmarks.
-- **Out of scope:** Migration (DEV-916), Nomad/Kubernetes (DEV-932),
-  distributed-mode resilience (DEV-908 — deferred to lead due to hardware constraints).
+### In scope
 
-## Hardware Constraint Notice
+- S3 API compatibility and client behaviour
+- Feature parity (versioning, object lock, lifecycle, replication)
+- Security, licence and maintenance review
+- Benchmarks (indicative — see hardware constraint notice)
+- A capability matrix and final recommendation
 
-This lab runs on a **reduced environment below Epic Profile B**:
+### Out of scope
 
-| Resource | Required (Profile B) | Actual |
+- Migration from MinIO to Silo (Jira: DEV-916)
+- Nomad / Kubernetes integration (Jira: DEV-932)
+- Distributed-mode resilience and healing (Jira: DEV-908)
+
+---
+
+## ⚠️ Hardware Constraint Notice
+
+This lab runs on a **reduced environment below the Epic's Profile B minimum**.
+
+| Resource | Required (Profile B) | Available (this lab) |
 |---|---|---|
 | CPU | 8 cores | 4 cores |
-| RAM | 16 GB | 4.3 GB |
-| Storage | 100 GB SSD | 80 GB HDD |
+| RAM | 16 GB | 4.3 GiB |
+| Storage | 100 GB SSD | 80 GB HDD (VBox) |
 
 **Consequences:**
-- Single-node topology only (no multi-node cluster)
-- Benchmarks are **indicative only**
-- DEV-908 (distributed mode) is **not evaluated** — handled by lead
-- Deviations documented in `docs/01-setup/DEVIATIONS.md`
+
+- Single-node topology only — no 4-node cluster
+- Benchmarks are **indicative only** and labelled as such
+- **DEV-908** (distributed mode) is **not evaluated**; deferred to the lead
+- All deviations are documented in [`docs/01-setup/DEVIATIONS.md`](docs/01-setup/DEVIATIONS.md)
+
+---
 
 ## Status Table
 
-| Sub-task | Description | Status |
-|---|---|---|
-| [DEV-905](docs/01-setup/) | Set up repo, pin versions, build lab | 🟡 In Progress |
-| [DEV-906](docs/02-seed/) | Seed data, verification toolkit | ⚪ Not started |
-| [DEV-907](docs/03-minio-features/) | MinIO feature validation | ⚪ Not started |
-| [DEV-908](docs/03b-distributed/) | Distributed mode | ⛔ Out of scope (hardware) |
-| [DEV-909](docs/04-replication/) | Replication validation | ⚪ Not started |
-| [DEV-910](docs/05-minio-bench/) | MinIO performance baseline | ⚪ Not started |
-| [DEV-911](docs/06-silo-features/) | Silo functional validation | ⚪ Not started |
-| [DEV-912](docs/07-client-compat/) | S3 client compatibility diff | ⚪ Not started |
-| [DEV-913](docs/08-silo-bench/) | Silo benchmark vs MinIO | ⚪ Not started |
-| [DEV-914](docs/09-security/) | Security, license, CVE review | ⚪ Not started |
-| [DEV-915](docs/10-report/) | Final report + recommendation | ⚪ Not started |
+| Sub-task | Description | Status | Doc |
+|---|---|---|---|
+| DEV-905 | Set up repo, pin versions, build lab | 🟡 In Progress | [docs/01-setup](docs/01-setup/) |
+| DEV-906 | Seed test data + verification toolkit | ⚪ Not started | — |
+| DEV-907 | MinIO feature validation | ⚪ Not started | — |
+| DEV-908 | MinIO distributed mode (resilience, healing) | ⛔ Out of scope | — |
+| DEV-909 | MinIO replication validation | ⚪ Not started | — |
+| DEV-910 | MinIO performance baseline | ⚪ Not started | — |
+| DEV-911 | Silo functional validation | ⚪ Not started | — |
+| DEV-912 | S3 and client compatibility diff | ⚪ Not started | — |
+| DEV-913 | Benchmark Silo vs MinIO | ⚪ Not started | — |
+| DEV-914 | Security, licence, CVE review | ⚪ Not started | — |
+| DEV-915 | Capability matrix + final report | ⚪ Not started | — |
 
-Legend: 🟢 Done · 🟡 In Progress · ⚪ Not Started · ⛔ Out of Scope
+**Legend:** 🟢 Done · 🟡 In Progress · ⚪ Not Started · ⛔ Out of Scope
 
-## Repo Layout
+---
 
-compose/ Docker Compose files (MinIO and Silo)
-configs/ TLS certs, nginx, prometheus configs
-scripts/ up / down / reset / lab-check scripts
-docs/ One folder per sub-task
-NN-name/
-README.md Goal, Environment, Steps, Evidence, Findings
-evidence/ Raw command output (text)
-screenshots/ Visual evidence
+## Repository Layout
 
-## How to Reproduce
+```
+.
+├── compose/                          Docker Compose files
+│   └── minio.yml                     Single-node MinIO lab (4 drives)
+├── configs/                          TLS, nginx, prometheus configs (planned)
+├── scripts/                          up / down / reset / lab-check scripts
+├── docs/
+│   ├── 01-setup/                     DEV-905 — repo, versions, lab
+│   │   ├── README.md                 Step-by-step with evidence
+│   │   ├── DEVIATIONS.md             Every deviation from the Epic spec
+│   │   ├── evidence/                 Raw command output (text)
+│   │   └── screenshots/              Console, settings, board captures
+│   └── _TEMPLATE/                    Template for new sub-task docs
+├── .env.example                      Placeholder env template (safe to commit)
+├── .gitignore                        Excludes .env, logs, data
+└── README.md                         This file
+```
+
+---
+
+## How to Reproduce the Lab
+
+### Prerequisites
+
+- Docker Engine 29.x
+- Docker Compose v2.x
+- At least 4 CPUs, 4 GiB RAM, 80 GB free disk
+- `mc` client (optional, runs in container too)
+
+### Steps
 
 ```bash
+# 1. Clone
 git clone https://github.com/ThanushaBai/minio-vs-silo-evaluation.git
 cd minio-vs-silo-evaluation
+
+# 2. Configure credentials
 cp .env.example .env
 # Edit .env with your credentials
+
+# 3. Create data directories
+sudo mkdir -p /data/minio/{data1,data2,data3,data4}
+sudo chown -R 1000:1000 /data/minio
+
+# 4. Start the lab
 docker compose --env-file .env -f compose/minio.yml up -d
-Security
 
-    No secrets committed. .env is git-ignored; only .env.example is committed.
+# 5. Verify
+docker compose --env-file .env -f compose/minio.yml ps
+curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:9000/minio/health/live
+# Expected: 200
+```
 
-    Pre-commit hook: gitleaks (v8.16.0) blocks commits with secrets.
+**Console:** `http://<VM-IP>:9001`
 
-    GitHub secret scanning enabled on this repo.
+---
 
-License
+## Security
 
-Evaluation repository. MinIO and Silo are AGPL-3.0.
+- **No secrets committed.** `.env` is git-ignored; only `.env.example` is tracked.
+- **Pre-commit hook:** [`gitleaks`](https://github.com/gitleaks/gitleaks) v8.16.0 blocks commits containing secrets.
+- **GitHub Secret Scanning** and **Push Protection** are enabled on this repository.
+- **A test commit with a fake AWS key was blocked** — evidence in [`docs/01-setup/evidence/gitleaks-test.txt`](docs/01-setup/evidence/gitleaks-test.txt).
+
+---
+
+## Documentation Rules
+
+Every sub-task has its own folder under `docs/NN-name/` with:
+
+- `README.md` — Goal, Environment, Steps, Results, Findings, Conclusion
+- `evidence/` — raw command output as `.txt` files
+- `screenshots/` — visual evidence
+
+**No PASS/FAIL claim is made without raw command output backing it.**
+
+---
+
+## Licence Notes
+
+Both MinIO and Silo are licensed under **AGPL-3.0**. Full review in DEV-914.
+
+---
+
+## Links
+
+- **Jira Epic:** DEV-904 (parent)
+- **Project Board:** https://github.com/users/ThanushaBai/projects/6
+- **Silo upstream:** https://github.com/pgsty/silo
+- **Silo docs:** https://silo.pgsty.com/
+- **Silo compatibility (O01–O08):** https://silo.pgsty.com/compatibility/
