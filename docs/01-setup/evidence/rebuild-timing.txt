@@ -1,0 +1,30 @@
+=== Rebuild-from-Scratch Timing ===
+Date: 2026-10-07T01:53:16+05:30
+
+--- Step 1: docker compose down ---
+ Container minio  Stopping
+ Container minio  Stopped
+ Container minio  Removing
+ Container minio  Removed
+ Network minio-lab_minio-net  Removing
+ Network minio-lab_minio-net  Removed
+
+--- Step 2: wipe data directories ---
+Data directories wiped
+
+--- Step 3: timed docker compose up ---
+ Network minio-lab_minio-net  Creating
+ Network minio-lab_minio-net  Created
+ Container minio  Creating
+ Container minio  Created
+ Container minio  Starting
+ Container minio  Started
+
+--- Step 4: wait for healthy ---
+Container healthy after 5s
+
+REBUILD TIME: 8 seconds
+NAME      IMAGE                                      COMMAND                  SERVICE   CREATED         STATUS                   PORTS
+minio     pgsty/minio:RELEASE.2026-08-04T00-00-00Z   "/usr/bin/docker-ent…"   minio     7 seconds ago   Up 7 seconds (healthy)   0.0.0.0:9000-9001->9000-9001/tcp
+
+--- Step 5: verify bucket is gone (fresh start) ---

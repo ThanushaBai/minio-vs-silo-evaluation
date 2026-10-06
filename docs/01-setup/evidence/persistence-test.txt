@@ -1,0 +1,62 @@
+=== Persistence Test ===
+Date: 2026-10-07T01:50:21+05:30
+Original SHA256: 50b502109aced25badb1b7c4266fa70e486c06522a4d65ef723cb3c3ce578bc6
+
+--- Create bucket ---
+Bucket created successfully `local/persist-test`.
+
+--- Upload ---
+`/tmp/persist-test.bin` -> `local/persist-test/persist-test.bin`
+┌──────────┬─────────────┬──────────┬────────────┐
+│ Total    │ Transferred │ Duration │ Speed      │
+│ 1.00 MiB │ 1.00 MiB    │ 00m00s   │ 3.62 MiB/s │
+└──────────┴─────────────┴──────────┴────────────┘
+
+--- List ---
+[2026-10-06 20:20:26 UTC] 1.0MiB STANDARD persist-test.bin
+
+--- Restart ---
+ Container minio  Restarting
+ Container minio  Started
+NAME      IMAGE                                      COMMAND                  SERVICE   CREATED       STATUS                    PORTS
+minio     pgsty/minio:RELEASE.2026-08-04T00-00-00Z   "/usr/bin/docker-ent…"   minio     2 hours ago   Up 21 seconds (healthy)   0.0.0.0:9000-9001->9000-9001/tcp
+
+--- Verify after restart ---
+`local/persist-test/persist-test.bin` -> `/tmp/persist-after-restart.bin`
+┌──────────┬─────────────┬──────────┬────────────┐
+│ Total    │ Transferred │ Duration │ Speed      │
+│ 1.00 MiB │ 1.00 MiB    │ 00m00s   │ 9.64 MiB/s │
+└──────────┴─────────────┴──────────┴────────────┘
+After restart SHA256: 50b502109aced25badb1b7c4266fa70e486c06522a4d65ef723cb3c3ce578bc6
+RESULT: PASS (checksum matches)
+
+=== Down + Up Persistence Test ===
+Date: 2026-10-07T01:51:55+05:30
+Original SHA256 (from disk): 50b502109aced25badb1b7c4266fa70e486c06522a4d65ef723cb3c3ce578bc6
+
+--- docker compose down (NO -v) ---
+ Container minio  Stopping
+ Container minio  Stopped
+ Container minio  Removing
+ Container minio  Removed
+ Network minio-lab_minio-net  Removing
+ Network minio-lab_minio-net  Removed
+
+--- docker compose up -d ---
+ Network minio-lab_minio-net  Creating
+ Network minio-lab_minio-net  Created
+ Container minio  Creating
+ Container minio  Created
+ Container minio  Starting
+ Container minio  Started
+NAME      IMAGE                                      COMMAND                  SERVICE   CREATED          STATUS                    PORTS
+minio     pgsty/minio:RELEASE.2026-08-04T00-00-00Z   "/usr/bin/docker-ent…"   minio     27 seconds ago   Up 26 seconds (healthy)   0.0.0.0:9000-9001->9000-9001/tcp
+
+--- Verify after down+up ---
+`local/persist-test/persist-test.bin` -> `/tmp/persist-after-downup.bin`
+┌──────────┬─────────────┬──────────┬────────────┐
+│ Total    │ Transferred │ Duration │ Speed      │
+│ 1.00 MiB │ 1.00 MiB    │ 00m00s   │ 6.85 MiB/s │
+└──────────┴─────────────┴──────────┴────────────┘
+After down+up SHA256: 50b502109aced25badb1b7c4266fa70e486c06522a4d65ef723cb3c3ce578bc6
+RESULT: PASS (checksum matches after down+up)
