@@ -1,0 +1,41 @@
+# Single-node MinIO lab (reduced Profile C)
+# Sized for 4 GB RAM VM - heavily labeled "indicative only"
+
+name: minio-lab
+
+services:
+  minio:
+    image: ${MINIO_IMAGE}:${MINIO_TAG}
+    container_name: minio
+    hostname: minio
+    command: server /data1 /data2 /data3 /data4 --console-address ":9001"
+    ports:
+      - "0.0.0.0:9000:9000"   # S3 API
+      - "0.0.0.0:9001:9001"   # Console
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_UPDATE: "off"
+    volumes:
+      - /data/minio/data1:/data1
+      - /data/minio/data2:/data2
+      - /data/minio/data3:/data3
+      - /data/minio/data4:/data4
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1536M
+    restart: unless-stopped
+    networks:
+      - minio-net
+
+networks:
+  minio-net:
+    driver: bridge
