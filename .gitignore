@@ -1,0 +1,7 @@
+.env
+*.log
+*.tar
+*.tar.gz
+data/
+evidence/*.txt
+!evidence/.gitkeep
