@@ -1,0 +1,2 @@
+REPOSITORY    TAG                            SIZE      IMAGE ID
+pgsty/minio   RELEASE.2026-08-04T00-00-00Z   216MB     b6bfe7239bfc

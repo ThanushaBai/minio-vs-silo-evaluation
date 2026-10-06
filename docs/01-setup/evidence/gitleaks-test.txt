@@ -1,0 +1,5 @@
+=== Gitleaks Block Test ===
+Date: 2026-10-07T00:49:58+05:30
+Tried to commit: AWS_ACCESS_KEY_ID=AKIA_REDACTED_EXAMPLE
+Expected: gitleaks blocks the commit
+Result: BLOCKED (as expected)

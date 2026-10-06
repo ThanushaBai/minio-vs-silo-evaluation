@@ -1,0 +1,2 @@
+NAME      IMAGE                                      COMMAND                  SERVICE   CREATED          STATUS                    PORTS
+minio     pgsty/minio:RELEASE.2026-08-04T00-00-00Z   "/usr/bin/docker-ent…"   minio     17 minutes ago   Up 17 minutes (healthy)   0.0.0.0:9000-9001->9000-9001/tcp
