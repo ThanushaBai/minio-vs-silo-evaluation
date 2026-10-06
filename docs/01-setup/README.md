@@ -1,8 +1,9 @@
 # ST01 / DEV-905 — Repo, Versions, and Local Lab
 
-**Status:** 🟡 In Progress
+**Status:** 🟢 Done
 **Jira:** DEV-905 (parent: DEV-904)
 **Started:** 2026-10-06
+**Completed:** 2026-10-07
 
 ---
 
@@ -34,6 +35,7 @@ This sub-task also establishes:
 | **MinIO Image** | `pgsty/minio:RELEASE.2026-08-04T00-00-00Z` |
 | **MinIO Image Digest** | `sha256:b6bfe7239bfc83fb90d31612d9704d86039dd714f7904b3f1ad68f211e602372` |
 | **Silo Image (pinned, not yet used)** | `pgsty/silo:RELEASE.2026-09-16T00-00-00Z` |
+| **mc/mcli client image** | `pgsty/mc:RELEASE.2026-09-16T00-00-00Z` |
 | **gitleaks** | 8.16.0-1build2 (via apt) |
 | **Date of record** | 2026-10-06 |
 
@@ -107,6 +109,7 @@ The last official MinIO Community release (`RELEASE.2025-10-15T17-29-55Z`) is **
 |---|---|---|
 | `pgsty/minio` | `RELEASE.2026-08-04T00-00-00Z` | `sha256:b6bfe7239bfc...` |
 | `pgsty/silo` | `RELEASE.2026-09-16T00-00-00Z` | *(pinned, not yet pulled)* |
+| `pgsty/mc` | `RELEASE.2026-09-16T00-00-00Z` | `sha256:cfc83108c3ab...` |
 
 **Expected:** immutable tags, digests recorded.
 **Actual:** ✅ PASS — see [`evidence/minio-digest.txt`](evidence/minio-digest.txt)
@@ -206,6 +209,67 @@ git commit -m "test: fake secret (should be blocked)"
 
 ---
 
+### Step 11 — Persistence test: container restart
+
+Uploaded a 1 MiB random file to the `persist-test` bucket, recorded its SHA256, then ran `docker compose restart` and re-downloaded the object.
+
+```bash
+# 1 MiB test file
+dd if=/dev/urandom of=/tmp/persist-test.bin bs=1M count=1
+ORIG_SHA=$(sha256sum /tmp/persist-test.bin | awk '{print $1}')
+
+# Upload + list + restart + download (see evidence file for full commands)
+docker compose --env-file .env -f compose/minio.yml restart
+
+# Compare SHA256 after restart
+```
+
+**Expected:** SHA256 matches after restart.
+**Actual:** ✅ PASS — identical SHA256 (`50b50210…`).
+Evidence: [`evidence/persistence-test.txt`](evidence/persistence-test.txt)
+
+---
+
+### Step 12 — Persistence test: down + up (no `-v`)
+
+Stopped the whole Compose project with `docker compose down` (**no `-v`**), brought it back up, and re-downloaded the same object.
+
+```bash
+docker compose --env-file .env -f compose/minio.yml down
+docker compose --env-file .env -f compose/minio.yml up -d
+# wait for healthy, then re-download and verify checksum
+```
+
+**Expected:** SHA256 matches after full down/up.
+**Actual:** ✅ PASS — identical SHA256.
+Evidence: [`evidence/persistence-test.txt`](evidence/persistence-test.txt)
+
+⚠️ **Warning recorded:** `docker compose down -v` would delete named volumes. Since our
+drives are *bind-mounted directories* (`/data/minio/data*`), `-v` alone would **not**
+delete them — but we never use `-v` in this lab. Destruction is done explicitly via
+[`scripts/reset.sh`](../../scripts/reset.sh).
+
+---
+
+### Step 13 — Rebuild from scratch + timing
+
+Wiped `/data/minio/data*`, then timed a fresh `docker compose up -d` until the container reported `healthy`.
+
+```bash
+docker compose --env-file .env -f compose/minio.yml down
+sudo rm -rf /data/minio/data1/* /data/minio/data2/* /data/minio/data3/* /data/minio/data4/*
+START=$(date +%s)
+docker compose --env-file .env -f compose/minio.yml up -d
+# poll for health ...
+END=$(date +%s); echo "REBUILD TIME: $((END - START)) seconds"
+```
+
+**Expected:** reproducible from repo alone, time recorded.
+**Actual:** ✅ PASS — **8 seconds** to healthy.
+Evidence: [`evidence/rebuild-timing.txt`](evidence/rebuild-timing.txt)
+
+---
+
 ## Results Table
 
 | # | Step | Expected | Actual | Status |
@@ -220,6 +284,9 @@ git commit -m "test: fake secret (should be blocked)"
 | 8 | gitleaks hook | Installed, executable | OK | ✅ PASS |
 | 9 | gitleaks blocks fake secret | Blocked | Blocked | ✅ PASS |
 | 10 | GitHub Secret Scanning | Enabled | Enabled | ✅ PASS |
+| 11 | Persistence after container restart | SHA256 matches | SHA256 matches | ✅ PASS |
+| 12 | Persistence after down + up (no `-v`) | SHA256 matches | SHA256 matches | ✅ PASS |
+| 13 | Rebuild from scratch | Reproducible, time recorded | 8 seconds | ✅ PASS |
 
 ---
 
@@ -227,28 +294,36 @@ git commit -m "test: fake secret (should be blocked)"
 
 1. **MinIO is no longer on Docker Hub.** The last official Community Edition image (`RELEASE.2025-10-15T17-29-55Z`) was deleted. Workaround: use the community mirror `pgsty/minio`. Recorded as deviation #4.
 
-2. **Single-node warning is expected.** MinIO logs:
+2. **`minio/mc` image is also gone.** The official `minio/mc` Docker image was removed alongside the server image. Workaround: use `pgsty/mc`, which is Silo's own `mcli` client. Recorded as deviation #8.
+
+3. **Single-node warning is expected.** MinIO logs:
    > `WARNING: Host local has more than 2 drives of set. A host failure will result in data becoming unavailable.`
    This is expected for a single-node lab and is not a bug.
 
-3. **GOMAXPROCS warning.** MinIO logs `GOMAXPROCS(2) < NumCPU(4)`. Caused by the Docker CPU limit (`cpus: "2.0"`). Performance impact is documented in the benchmark sub-task.
+4. **GOMAXPROCS warning.** MinIO logs `GOMAXPROCS(2) < NumCPU(4)`. Caused by the Docker CPU limit (`cpus: "2.0"`). Performance impact is documented in the benchmark sub-task.
 
-4. **Console bound to `0.0.0.0`.** Required to reach the Console from the Windows host browser. Documented as deviation #5.
+5. **Console bound to `0.0.0.0`.** Required to reach the Console from the Windows host browser. Documented as deviation #5.
 
-5. **Pre-commit hook blocks legitimate test artifacts.** The gitleaks evidence file initially contained the fake AWS key it was documenting. Redacted to `AKIA_REDACTED_EXAMPLE` so the hook doesn't self-block future commits.
+6. **Pre-commit hook blocks legitimate test artifacts.** The gitleaks evidence file initially contained the fake AWS key it was documenting. Redacted to `AKIA_REDACTED_EXAMPLE` so the hook doesn't self-block future commits.
+
+7. **Credentials never hardcoded in scripts.** Test scripts load `MINIO_ROOT_USER` /
+   `MINIO_ROOT_PASSWORD` from `.env` via shell sourcing, and pass them to containers
+   via `MC_HOST_local` env variables. The `.env` file is git-ignored.
 
 ---
 
 ## Conclusion
 
-ST01 objectives are met with documented reduced scope:
+ST01 is **complete** with documented reduced scope:
 
 - Repo, docs and issue board are in place
-- MinIO baseline is running and accessible
+- MinIO baseline is running, healthy, and accessible
 - Secret-scanning safeguards are active (proven by a blocked test commit)
+- Data persists across restart and full down/up
+- The lab rebuilds from the repo in **8 seconds**
 - All deviations from the Epic spec are recorded in [`DEVIATIONS.md`](DEVIATIONS.md)
 
-**Ready to proceed to DEV-906 (seed data + verification toolkit).**
+**Proceeding to DEV-906 (seed data + verification toolkit).**
 
 ---
 
@@ -262,20 +337,19 @@ cd minio-vs-silo-evaluation
 cp .env.example .env        # edit with your credentials
 sudo mkdir -p /data/minio/{data1,data2,data3,data4}
 sudo chown -R 1000:1000 /data/minio
-docker compose --env-file .env -f compose/minio.yml up -d
+./scripts/up.sh
 ```
 
 ### Stop (preserves data)
 
 ```bash
-docker compose --env-file .env -f compose/minio.yml down
+./scripts/down.sh
 ```
 
 ### Destroy all data (⚠️ destructive)
 
 ```bash
-docker compose --env-file .env -f compose/minio.yml down
-sudo rm -rf /data/minio/data*
+./scripts/reset.sh
 ```
 
 ---
