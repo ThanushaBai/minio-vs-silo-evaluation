@@ -1,0 +1,14 @@
+==========================================
+  MinIO vs Silo Lab — Environment Check
+==========================================
+
+PASS  CPU cores:      4 (>= 2 required)
+PASS  RAM:            4 GiB (>= 3 GiB required)
+PASS  Free disk (/data): 73 GB (>= 60 GB required)
+PASS  Docker:         29.1.3
+PASS  Docker Compose: 2.40.3+ds1-0ubuntu1
+PASS  Docker daemon:  running (root: /data/docker)
+PASS  gitleaks:       installed
+
+==========================================
+All checks passed.

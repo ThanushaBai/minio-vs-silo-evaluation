@@ -1,0 +1,89 @@
+#!/bin/bash
+# lab-check — Verify this machine meets the minimum requirements for the lab.
+# Usage: ./scripts/lab-check
+# Exit code 0 = all checks passed; 1 = one or more checks failed.
+
+set -u
+
+FAIL=0
+MIN_CPU=2
+MIN_RAM_GB=3
+MIN_DISK_GB=60
+
+echo "=========================================="
+echo "  MinIO vs Silo Lab — Environment Check"
+echo "=========================================="
+echo ""
+
+CPU=$(nproc)
+if [ "$CPU" -ge "$MIN_CPU" ]; then
+  echo "PASS  CPU cores:      $CPU (>= $MIN_CPU required)"
+else
+  echo "FAIL  CPU cores:      $CPU (< $MIN_CPU required)"
+  FAIL=1
+fi
+
+RAM_KB=$(grep MemTotal /proc/meminfo | awk '{print $2}')
+RAM_GB=$((RAM_KB / 1024 / 1024))
+if [ "$RAM_GB" -ge "$MIN_RAM_GB" ]; then
+  echo "PASS  RAM:            ${RAM_GB} GiB (>= ${MIN_RAM_GB} GiB required)"
+else
+  echo "FAIL  RAM:            ${RAM_GB} GiB (< ${MIN_RAM_GB} GiB required)"
+  FAIL=1
+fi
+
+if mountpoint -q /data 2>/dev/null; then
+  DISK_FREE_GB=$(df -BG /data | awk 'NR==2 {gsub("G",""); print $4}')
+  DISK_PATH=/data
+else
+  DISK_FREE_GB=$(df -BG / | awk 'NR==2 {gsub("G",""); print $4}')
+  DISK_PATH=/
+  echo "WARN  /data not a separate mount; checking / instead."
+fi
+
+if [ "$DISK_FREE_GB" -ge "$MIN_DISK_GB" ]; then
+  echo "PASS  Free disk ($DISK_PATH): ${DISK_FREE_GB} GB (>= ${MIN_DISK_GB} GB required)"
+else
+  echo "FAIL  Free disk ($DISK_PATH): ${DISK_FREE_GB} GB (< ${MIN_DISK_GB} GB required)"
+  FAIL=1
+fi
+
+if command -v docker >/dev/null 2>&1; then
+  DV=$(docker --version | awk '{print $3}' | tr -d ',')
+  echo "PASS  Docker:         $DV"
+else
+  echo "FAIL  Docker:         not installed"
+  FAIL=1
+fi
+
+if docker compose version >/dev/null 2>&1; then
+  CV=$(docker compose version --short 2>/dev/null || docker compose version | awk '{print $4}')
+  echo "PASS  Docker Compose: $CV"
+else
+  echo "FAIL  Docker Compose: not available"
+  FAIL=1
+fi
+
+if docker info >/dev/null 2>&1; then
+  ROOT_DIR=$(docker info --format '{{.DockerRootDir}}' 2>/dev/null)
+  echo "PASS  Docker daemon:  running (root: $ROOT_DIR)"
+else
+  echo "FAIL  Docker daemon:  not running or permission denied"
+  FAIL=1
+fi
+
+if command -v gitleaks >/dev/null 2>&1; then
+  echo "PASS  gitleaks:       installed"
+else
+  echo "WARN  gitleaks:       not installed (pre-commit hook will fail)"
+fi
+
+echo ""
+echo "=========================================="
+if [ "$FAIL" -eq 0 ]; then
+  echo "All checks passed."
+  exit 0
+else
+  echo "One or more checks FAILED."
+  exit 1
+fi
