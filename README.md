@@ -56,6 +56,7 @@ This lab runs on a **reduced environment below the Epic's Profile B minimum**.
 - Single-node topology only — no 4-node cluster
 - Benchmarks are **indicative only** and labelled as such
 - **DEV-908** (distributed mode) is **not evaluated**; deferred to the lead
+- Dataset reduced from 5–10 GB to ~223 MB
 - All deviations are documented in [`docs/01-setup/DEVIATIONS.md`](docs/01-setup/DEVIATIONS.md)
 
 ---
@@ -65,7 +66,7 @@ This lab runs on a **reduced environment below the Epic's Profile B minimum**.
 | Sub-task | Description | Status | Doc |
 |---|---|---|---|
 | DEV-905 | Set up repo, pin versions, build lab | 🟢 Done | [docs/01-setup](docs/01-setup/) |
-| DEV-906 | Seed test data + verification toolkit | ⚪ Not started | — |
+| DEV-906 | Seed test data + verification toolkit | 🟢 Done | [docs/02-test-data-and-verification](docs/02-test-data-and-verification/) |
 | DEV-907 | MinIO feature validation | ⚪ Not started | — |
 | DEV-908 | MinIO distributed mode (resilience, healing) | ⛔ Out of scope | — |
 | DEV-909 | MinIO replication validation | ⚪ Not started | — |
@@ -87,14 +88,17 @@ This lab runs on a **reduced environment below the Epic's Profile B minimum**.
 ├── compose/                          Docker Compose files
 │   └── minio.yml                     Single-node MinIO lab (4 drives)
 ├── configs/                          TLS, nginx, prometheus configs (planned)
-├── scripts/                          up / down / reset / lab-check scripts
+├── scripts/                          up / down / reset / lab-check / seed-* / manifest-*
+├── manifests/                        Generated manifest CSVs (baseline, comparisons)
 ├── docs/
 │   ├── 01-setup/                     DEV-905 — repo, versions, lab
 │   │   ├── README.md                 Step-by-step with evidence
 │   │   ├── DEVIATIONS.md             Every deviation from the Epic spec
 │   │   ├── evidence/                 Raw command output (text)
 │   │   └── screenshots/              Console, settings, board captures
-│   └── _TEMPLATE/                    Template for new sub-task docs
+│   └── 02-test-data-and-verification/  DEV-906 — seed data + toolkit
+│       ├── README.md
+│       └── evidence/
 ├── .env.example                      Placeholder env template (safe to commit)
 ├── .gitignore                        Excludes .env, logs, data
 └── README.md                         This file
@@ -139,12 +143,26 @@ curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:9000/minio/health/live
 
 ---
 
+## Seed the Dataset (DEV-906)
+
+```bash
+./scripts/seed-data.sh        # 336 files, ~223 MB
+./scripts/seed-upload.sh      # 6 demo buckets, 344 objects
+./scripts/seed-versioned.sh   # 6 feature buckets (versioning, lock, tags, metadata)
+./scripts/seed-config.sh      # lifecycle, policy, notifications, IAM
+./scripts/manifest.sh manifests/minio-baseline.csv
+./scripts/manifest-self-test.sh
+```
+
+---
+
 ## Security
 
 - **No secrets committed.** `.env` is git-ignored; only `.env.example` is tracked.
 - **Pre-commit hook:** [`gitleaks`](https://github.com/gitleaks/gitleaks) v8.16.0 blocks commits containing secrets.
 - **GitHub Secret Scanning** and **Push Protection** are enabled on this repository.
 - **A test commit with a fake AWS key was blocked** — evidence in [`docs/01-setup/evidence/gitleaks-test.txt`](docs/01-setup/evidence/gitleaks-test.txt).
+- **Service-account secrets** in evidence are redacted before commit.
 
 ---
 
