@@ -1,0 +1,94 @@
+[seed-config] === Lifecycle rules on demo-versioned ===
+mc: <ERROR> Unable to read ILM configuration. EOF.
+Lifecycle configuration rule added with ID `db37kpi92a7000dmdbrg` to local/demo-versioned.
+[seed-config] Current lifecycle rules:
+┌───────────────────────────────────────────────────────────────────────────────────────┐
+│ Expiration for latest version (Expiration)                                            │
+├──────────────────────┬─────────┬────────┬──────┬────────────────┬─────────────────────┤
+│ ID                   │ STATUS  │ PREFIX │ TAGS │ DAYS TO EXPIRE │ EXPIRE DELETEMARKER │
+├──────────────────────┼─────────┼────────┼──────┼────────────────┼─────────────────────┤
+│ db37jti92a7000endvcg │ Enabled │ -      │ -    │             30 │ false               │
+│ db37kpi92a7000dmdbrg │ Enabled │ -      │ -    │             30 │ false               │
+└──────────────────────┴─────────┴────────┴──────┴────────────────┴─────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│ Expiration for older versions (NoncurrentVersionExpiration)                     │
+├──────────────────────┬─────────┬────────┬──────┬────────────────┬───────────────┤
+│ ID                   │ STATUS  │ PREFIX │ TAGS │ DAYS TO EXPIRE │ KEEP VERSIONS │
+├──────────────────────┼─────────┼────────┼──────┼────────────────┼───────────────┤
+│ db37jti92a7000endvcg │ Enabled │ -      │ -    │             30 │             0 │
+│ db37kpi92a7000dmdbrg │ Enabled │ -      │ -    │             30 │             0 │
+└──────────────────────┴─────────┴────────┴──────┴────────────────┴───────────────┘
+[seed-config] 
+[seed-config] === Bucket policy: anonymous read on demo-tagged ===
+Access permission for `local/demo-tagged` is set from `/data/testdata/admin/policy-anon-read.json`
+[seed-config] Anonymous access on demo-tagged:
+Access permission for `local/demo-tagged` is `custom`
+[seed-config] 
+[seed-config] === Notification config (placeholder webhook) ===
+mc: <ERROR> Unable to set 'notify_webhook:demo endpoint=http://127.0.0.1:9999/webhook' to server: error (demo:webhook): dial tcp 127.0.0.1:9999: connect: connection refused.
+[seed-config] (Notification target registered; no live receiver in the lab.)
+[seed-config] 
+[seed-config] === Replication config check ===
+[seed-config] Replication requires a peer MinIO site. Recorded as deferred:
+[seed-config]   - Peer setup will be tested in DEV-909 (replication validation)
+[seed-config]   - Current config state:
+SiteReplication is not enabled
+[seed-config] 
+[seed-config] === IAM setup ===
+[seed-config] --- Create policy ---
+Created policy `app-rw` successfully.
+app-rw
+[seed-config] 
+[seed-config] --- Create user ---
+Added user `appuser` successfully.
+Attached Policies: [app-rw]
+To User: appuser
+[seed-config] User list:
+enabled    appuser               app-rw              
+[seed-config] 
+[seed-config] --- Create group ---
+Added members `appuser` to group `appgroup` successfully.
+[seed-config] Group list:
+appgroup
+[seed-config] 
+[seed-config] --- Create service account for appuser ---
+Access Key: <REDACTED_ACCESS_KEY>
+Secret Key: <REDACTED_SECRET_KEY>
+Expiration: no-expiry
+[seed-config] Service accounts for appuser:
+   Access Key        | Expiry                       
+<REDACTED_ACCESS_KEY> | no-expiry                    
+<REDACTED_ACCESS_KEY> | no-expiry                    
+[seed-config] 
+[seed-config] === Summary ===
+[seed-config] Buckets:
+[2026-10-07 14:13:57 UTC]     0B demo-flat/
+[2026-10-07 14:13:54 UTC]     0B demo-large/
+[2026-10-07 16:32:34 UTC]     0B demo-lock-comp/
+[2026-10-07 16:32:28 UTC]     0B demo-lock-gov/
+[2026-10-07 16:32:40 UTC]     0B demo-lock-legal/
+[2026-10-07 14:13:52 UTC]     0B demo-medium/
+[2026-10-07 16:32:21 UTC]     0B demo-metadata/
+[2026-10-07 14:13:59 UTC]     0B demo-mixed/
+[2026-10-07 14:13:55 UTC]     0B demo-nested/
+[2026-10-07 14:13:51 UTC]     0B demo-small/
+[2026-10-07 16:32:11 UTC]     0B demo-tagged/
+[2026-10-07 16:31:57 UTC]     0B demo-versioned/
+[seed-config] 
+[seed-config] Users:
+enabled    appuser               app-rw              
+[seed-config] 
+[seed-config] Policies:
+consoleAdmin
+iamAdmin
+infraAdmin
+readonly
+tablesAdmin
+tablesReadWrite
+diagnostics
+readwrite
+tablesReadOnly
+writeonly
+app-rw
+[seed-config] 
+[seed-config] seed-config.sh complete.
