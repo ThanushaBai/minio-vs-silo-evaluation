@@ -1,0 +1,16 @@
+[seed-data] Preparing directories under /data/testdata/local
+[seed-data] Generating 100 small objects (10 KB each)
+[seed-data] Generating 20 medium objects (1 MB each)
+[seed-data] Generating 1 large object (200 MB)
+[seed-data] Generating 15 nested objects (5 KB each) across 3 levels
+[seed-data] Generating 200 flat objects (2 KB each)
+[seed-data] 
+[seed-data] === Summary ===
+  small        100 files  1.2M
+  medium        20 files  21M
+  large          1 files  201M
+  nested        15 files  136K
+  flat         200 files  812K
+[seed-data] 
+[seed-data] TOTAL: 336 files, 223M
+[seed-data] Dataset ready at: /data/testdata/local

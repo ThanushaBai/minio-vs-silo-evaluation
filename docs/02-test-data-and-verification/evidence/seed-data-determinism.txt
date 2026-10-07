@@ -1,0 +1,6 @@
+=== Determinism Check ===
+Date: 2026-10-07T19:41:33+05:30
+File: /data/testdata/local/small/obj-small-001.bin
+Before regeneration: 487fbbc8a3e926d3919c782336b89e61b24ce861d064ea7e81502e47f65ecb69
+After  regeneration: 487fbbc8a3e926d3919c782336b89e61b24ce861d064ea7e81502e47f65ecb69
+RESULT: PASS (deterministic)
