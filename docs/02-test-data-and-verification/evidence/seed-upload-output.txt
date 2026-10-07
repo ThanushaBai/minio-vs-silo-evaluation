@@ -1,0 +1,31 @@
+[seed-upload] Creating buckets
+  created: demo-small
+  created: demo-medium
+  created: demo-large
+  created: demo-nested
+  created: demo-flat
+  created: demo-mixed
+[seed-upload] Uploading demo-small (100 files)
+[seed-upload] Uploading demo-medium (20 files)
+[seed-upload] Uploading demo-large (1 file)
+[seed-upload] Uploading demo-nested (deep prefix layout)
+[seed-upload] Uploading demo-flat (200 files)
+[seed-upload] Uploading demo-mixed (2 files from each category)
+[seed-upload] 
+[seed-upload] === Bucket summary ===
+[2026-10-07 14:13:57 UTC]     0B demo-flat/
+[2026-10-07 14:13:54 UTC]     0B demo-large/
+[2026-10-07 14:13:52 UTC]     0B demo-medium/
+[2026-10-07 14:13:59 UTC]     0B demo-mixed/
+[2026-10-07 14:13:55 UTC]     0B demo-nested/
+[2026-10-07 14:13:51 UTC]     0B demo-small/
+[seed-upload] 
+[seed-upload] === Per-bucket object counts ===
+  demo-small       100 objects
+  demo-medium       20 objects
+  demo-large         1 objects
+  demo-nested       15 objects
+  demo-flat        200 objects
+  demo-mixed         8 objects
+[seed-upload] 
+[seed-upload] Upload complete.
