@@ -1,0 +1,18 @@
+=== Legal Hold WORM Protection — Observed ===
+Date: 2026-10-07
+
+While cleaning up the demo-lock-legal bucket, MinIO refused to delete an object
+that had a legal hold applied:
+
+    mc: <ERROR> Failed to remove `local/demo-lock-legal/`.
+    Object, 'legal-object.bin (Version ID=f5bad799-6aad-4ffd-af69-37070dcb72a1)'
+    is WORM protected and cannot be overwritten.
+
+After explicitly clearing the legal hold:
+
+    Object legal hold successfully cleared for `legal-object.bin`.
+    Removed `local/demo-lock-legal/legal-object.bin` (versionId=f5bad799-...).
+    Removed `local/demo-lock-legal/` successfully.
+
+CONCLUSION: Legal hold (WORM) enforcement works as expected.
+RESULT: PASS

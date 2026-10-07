@@ -1,0 +1,61 @@
+[seed-versioned] === demo-versioned ===
+[seed-versioned] Versioning enabled
+[seed-versioned] Versions (including delete marker):
+[2026-10-07 16:32:08 UTC]     0B STANDARD 5b0a9e9a-e142-4517-906c-5de4a595dbfd v4 DEL versioned-key.txt
+[2026-10-07 16:32:05 UTC]    24B STANDARD 46230f9e-c041-4337-917d-eb29216841e8 v3 PUT versioned-key.txt
+[2026-10-07 16:32:03 UTC]    28B STANDARD d63be12f-d01e-4f20-b19f-729e16fb154c v2 PUT versioned-key.txt
+[2026-10-07 16:32:00 UTC]    18B STANDARD bf025395-9dc5-47a0-be83-1fe5ae8ec147 v1 PUT versioned-key.txt
+[seed-versioned] 
+[seed-versioned] === demo-tagged ===
+[seed-versioned] Tags:
+--- tagged-001.bin ---
+Name        : http://172.18.0.2:9000/demo-tagged/tagged-001.bin
+criticality : low
+env         : test
+team        : devops
+--- tagged-002.bin ---
+Name        : http://172.18.0.2:9000/demo-tagged/tagged-002.bin
+criticality : high
+env         : prod
+team        : platform
+[seed-versioned] 
+[seed-versioned] === demo-metadata ===
+[seed-versioned] Metadata:
+--- meta-001.bin ---
+Metadata  :
+  Content-Type    : application/octet-stream 
+  X-Amz-Meta-Owner: alice,X-Amz-Meta-Project=minio-eval 
+
+--- meta-002.bin ---
+Metadata  :
+  X-Amz-Meta-Owner: bob,X-Amz-Meta-Project=silo-eval,X-Amz-Meta-Stage=beta 
+  Content-Type    : application/octet-stream 
+
+[seed-versioned] 
+[seed-versioned] === demo-lock-gov (GOVERNANCE, 1d) ===
+[seed-versioned] Default retention:
+Object locking 'GOVERNANCE' is configured for 1DAYS.
+[seed-versioned] 
+[seed-versioned] === demo-lock-comp (COMPLIANCE, 1d) ===
+[seed-versioned] Default retention:
+Object locking 'COMPLIANCE' is configured for 1DAYS.
+[seed-versioned] 
+[seed-versioned] === demo-lock-legal (Legal Hold) ===
+[seed-versioned] Legal hold:
+[    ON    ]  legal-object.bin
+[seed-versioned] 
+[seed-versioned] === Summary: all feature buckets ===
+[2026-10-07 16:32:34 UTC]     0B demo-lock-comp/
+[2026-10-07 16:32:28 UTC]     0B demo-lock-gov/
+[2026-10-07 16:32:40 UTC]     0B demo-lock-legal/
+[2026-10-07 16:32:21 UTC]     0B demo-metadata/
+[2026-10-07 16:32:11 UTC]     0B demo-tagged/
+[2026-10-07 16:31:57 UTC]     0B demo-versioned/
+[seed-versioned] 
+[seed-versioned] Versioned bucket objects (versions + delete markers):
+4
+[seed-versioned] 
+[seed-versioned] Total buckets:
+12
+[seed-versioned] 
+[seed-versioned] seed-versioned.sh complete.
