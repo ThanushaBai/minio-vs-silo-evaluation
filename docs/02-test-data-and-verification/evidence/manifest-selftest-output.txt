@@ -1,0 +1,25 @@
+[selftest] 
+[selftest] === Case 1: Missing object ===
+[selftest] --- Test: missing object ---
+[selftest]   ✅ PASS: exit 1 + pattern 'MISSING:.*1' matched
+[selftest] 
+[selftest] === Case 2: Altered content (etag mismatch) ===
+[selftest] --- Test: altered object ---
+[selftest]   ✅ PASS: exit 1 + pattern 'ALTERED:.*1' matched
+[selftest] 
+[selftest] === Case 3: Missing version ===
+[selftest]   Removing version with version_id=5b0a9e9a-e142-4517-906c-5de4a595dbfd
+[selftest] --- Test: missing version ---
+[selftest]   ✅ PASS: exit 1 + pattern 'MISSING:.*1' matched
+[selftest] 
+[selftest] === Case 4: Extra object (sanity) ===
+[selftest] --- Test: extra object ---
+[selftest]   ✅ PASS: exit 1 + pattern 'EXTRA:.*1' matched
+[selftest] 
+[selftest] ==========================================
+[selftest]   Self-test results
+[selftest] ==========================================
+[selftest]   PASS: 4
+[selftest]   FAIL: 0
+[selftest] ==========================================
+[selftest] ✅ All cases PASSED — manifest-compare.sh detects each difference category.

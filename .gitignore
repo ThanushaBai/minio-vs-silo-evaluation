@@ -1,7 +1,15 @@
+# Secrets and environment files
 .env
+.env.local
+*.pem
+*.key
+*.crt
+
+# Logs and archives
 *.log
 *.tar
 *.tar.gz
+
+# Runtime data
 data/
-evidence/*.txt
-!evidence/.gitkeep
+/data/
