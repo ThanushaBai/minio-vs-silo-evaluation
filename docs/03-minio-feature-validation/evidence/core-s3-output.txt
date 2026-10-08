@@ -1,0 +1,46 @@
+
+--- 1. Bucket create ---
+PASS  bucket created                                           1
+
+--- 2. PUT object ---
+PASS  PUT object                                               1
+
+--- 3. HEAD object (stat) ---
+PASS  HEAD object (size=12)                                    12
+
+--- 4. GET object ---
+PASS  GET object (sha256 match)                                f8fecc5ab3fcd7e40fb01a9e14ad5df42c1f1dc72a66a8d8e52a27f9287d0e12
+
+--- 5. Copy object (server-side) ---
+PASS  Copy object                                              1
+
+--- 6. Range read (bytes 0-4) ---
+PASS  Range read 0-4                                           hello
+
+--- 7. Multipart upload (7 MB) ---
+PASS  Multipart upload size                                    7340032
+
+--- 8. Presigned URL generation ---
+PASS  Presigned URL generated                                  1
+
+--- 9. Presigned URL fetch ---
+PASS  Presigned URL fetch (HTTP)                               200
+
+--- 10. List (flat) ---
+PASS  List objects                                             2
+
+--- 11. List recursive ---
+PASS  List recursive count                                     3
+
+--- 12. Batch delete ---
+PASS  Batch delete (remaining)                                 1
+
+--- 13. Delete single object ---
+PASS  Delete single object (empty)                             0
+
+--- 14. Delete bucket ---
+PASS  Bucket deleted                                           0
+
+==========================================
+  Core S3 tests:  PASS=14  FAIL=0
+==========================================
