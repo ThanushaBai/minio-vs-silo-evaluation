@@ -1,0 +1,40 @@
+
+--- 1. Default bucket is private (anonymous denied) ---
+PASS  Anonymous GET denied (403)                                    403
+
+--- 2. Set anonymous read policy ---
+  Anonymous state: Access permission for `local/test-access` is `download`
+PASS  Anonymous GET allowed (200)                                   200
+
+--- 3. Revoke anonymous access ---
+PASS  Anonymous GET revoked (403)                                   403
+
+--- 4. Create IAM user ---
+PASS  User access-user created                                      1
+
+--- 5. Create IAM policy ---
+PASS  Policy access-read created                                    1
+
+--- 6. Attach policy to user ---
+PASS  Policy attached to user                                       1
+
+--- 7. Test IAM user access with scoped credentials ---
+PASS  Policy has s3:GetObject                                       1
+
+--- 8. Create group and add user ---
+PASS  Group access-group created                                    1
+
+--- 9. Create service account (redacted output) ---
+PASS  Service account created                                       1
+PASS  Service account GET (200)                                     200
+
+--- 10. STS — availability check ---
+PASS  STS endpoint exists                                           1
+      STS returned HTTP 400 (endpoint present, auth required)
+
+--- 11. Cleanup ---
+PASS  Cleanup complete                                              1
+
+==========================================
+  Access control tests:  PASS=12  FAIL=0
+==========================================
