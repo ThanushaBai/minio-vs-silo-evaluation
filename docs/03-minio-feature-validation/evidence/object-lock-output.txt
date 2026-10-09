@@ -1,0 +1,46 @@
+
+--- 1. Create bucket with --with-lock ---
+PASS  Lock-enabled bucket created                              1
+PASS  Bucket accepts retention config                          1
+
+--- 2. Upload with GOVERNANCE 1-day retention ---
+PASS  Governance object uploaded                               1
+PASS  Object retention mode                                    GOVERNANCE
+
+--- 3. Permanent delete WITHOUT --bypass (should fail) ---
+PASS  Permanent delete blocked (governance)                    1
+
+--- 4. Permanent delete WITH --bypass (should succeed) ---
+PASS  Version permanently deleted with bypass                  0
+
+--- 5. Upload with COMPLIANCE retention ---
+PASS  Compliance object uploaded                               1
+PASS  Object retention mode                                    COMPLIANCE
+
+--- 6. Compliance permanent delete WITHOUT bypass (should fail) ---
+PASS  Compliance delete blocked                                1
+
+--- 7. Compliance delete WITH --bypass (must still fail) ---
+PASS  Compliance version survives --bypass                     1
+
+--- 8. Extend governance retention to 3 days ---
+PASS  Retention extended (until-date changed)                  1
+      Original until: 2026-10-10T14:20:47Z
+      New until:      2026-10-12T14:20:49Z
+
+--- 9. Legal hold — set, verify, delete blocked, clear ---
+PASS  Legal hold ON                                            1
+PASS  Version survives delete under legal hold                 1
+PASS  Legal hold cleared (OFF)                                 1
+
+--- 10. Default bucket retention ---
+PASS  Default retention set (governance)                       1
+PASS  New object inherits default retention                    1
+
+--- 11. Cleanup ---
+PASS  Bucket cleanup (blocked by compliance retention)         expected
+      Compliance-locked objects persist until retention expires (correct behavior).
+
+==========================================
+  Object lock tests:  PASS=17  FAIL=0
+==========================================
