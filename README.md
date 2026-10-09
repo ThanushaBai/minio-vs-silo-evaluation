@@ -67,7 +67,7 @@ This lab runs on a **reduced environment below the Epic's Profile B minimum**.
 |---|---|---|---|
 | DEV-905 | Set up repo, pin versions, build lab | 🟢 Done | [docs/01-setup](docs/01-setup/) |
 | DEV-906 | Seed test data + verification toolkit | 🟢 Done | [docs/02-test-data-and-verification](docs/02-test-data-and-verification/) |
-| DEV-907 | MinIO feature validation | ⚪ Not started | — |
+| DEV-907 | MinIO feature validation | 🟢 Done | [docs/03-minio-feature-validation](docs/03-minio-feature-validation/) |
 | DEV-908 | MinIO distributed mode (resilience, healing) | ⛔ Out of scope | — |
 | DEV-909 | MinIO replication validation | ⚪ Not started | — |
 | DEV-910 | MinIO performance baseline | ⚪ Not started | — |
@@ -79,6 +79,8 @@ This lab runs on a **reduced environment below the Epic's Profile B minimum**.
 
 **Legend:** 🟢 Done · 🟡 In Progress · ⚪ Not Started · ⛔ Out of Scope
 
+**Progress:** 3 of 11 sub-tasks complete (DEV-905, DEV-906, DEV-907) — 103 feature tests, 0 failures.
+
 ---
 
 ## Repository Layout
@@ -88,15 +90,18 @@ This lab runs on a **reduced environment below the Epic's Profile B minimum**.
 ├── compose/                          Docker Compose files
 │   └── minio.yml                     Single-node MinIO lab (4 drives)
 ├── configs/                          TLS, nginx, prometheus configs (planned)
-├── scripts/                          up / down / reset / lab-check / seed-* / manifest-*
+├── scripts/                          up / down / reset / lab-check / seed-* / manifest-* / test-*
 ├── manifests/                        Generated manifest CSVs (baseline, comparisons)
 ├── docs/
 │   ├── 01-setup/                     DEV-905 — repo, versions, lab
-│   │   ├── README.md                 Step-by-step with evidence
+│   │   ├── README.md
 │   │   ├── DEVIATIONS.md             Every deviation from the Epic spec
-│   │   ├── evidence/                 Raw command output (text)
-│   │   └── screenshots/              Console, settings, board captures
-│   └── 02-test-data-and-verification/  DEV-906 — seed data + toolkit
+│   │   ├── evidence/
+│   │   └── screenshots/
+│   ├── 02-test-data-and-verification/  DEV-906 — seed data + toolkit
+│   │   ├── README.md
+│   │   └── evidence/
+│   └── 03-minio-feature-validation/  DEV-907 — S3 API + features
 │       ├── README.md
 │       └── evidence/
 ├── .env.example                      Placeholder env template (safe to commit)
@@ -153,6 +158,24 @@ curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:9000/minio/health/live
 ./scripts/manifest.sh manifests/minio-baseline.csv
 ./scripts/manifest-self-test.sh
 ```
+
+---
+
+## Run the Feature Validation (DEV-907)
+
+```bash
+./scripts/test-core-s3.sh              # 14 tests — core S3
+./scripts/test-metadata-tags.sh        # 11 tests — metadata + tags
+./scripts/test-access-control.sh       # 12 tests — policies, IAM, STS
+./scripts/test-encryption.sh           # 10 checks — SSE-S3/C/KMS + TLS
+./scripts/test-observability.sh        # 21 tests — metrics, logs, health
+./scripts/test-versioning.sh           # 15 tests — versioning deep dive
+./scripts/test-object-lock.sh          # 17 tests — governance + compliance
+./scripts/test-lifecycle.sh            # 10 tests — lifecycle rules
+./scripts/test-sdk-compat.sh           # 4 SDKs — boto3, minio-py, aws-cli, mc
+```
+
+**Total: 103 tests across the S3 API and MinIO feature set.**
 
 ---
 
