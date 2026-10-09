@@ -1,0 +1,16 @@
+
+--- 1. boto3 SDK (Python) ---
+PASS  boto3: create/put/list/get/delete/delete-bucket
+
+--- 2. minio-py SDK (Python) ---
+PASS  minio-py: create/put/list/get/delete/delete-bucket
+
+--- 3. aws-cli ---
+PASS  aws-cli: create/put/list/delete-bucket                   1
+
+--- 4. mc (mcli) ---
+PASS  mc: create/put/list/delete-bucket                        1
+
+==========================================
+  SDK compatibility:  PASS=4  FAIL=0
+==========================================
