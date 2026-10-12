@@ -1,0 +1,19 @@
+=== Replication Lag Measurement ===
+Date: 2026-10-12T19:45:40+05:30
+
+Writing 20 objects to source...
+  Wrote 20 objects in 48.362167756s
+  Replication took 1.540665492s for 20 objects
+  Target object count: 20
+  Avg lag per object: .077s
+
+--- Target Down Test ---
+  Time to consistency: 2.356020396s
+  Final target count: 25
+
+--- Network Cut Test ---
+  Time to consistency after network cut: 26.071915109s
+  Final target count: 30
+  Source final count: 30
+  Target final count: 30
+  Difference: 0
