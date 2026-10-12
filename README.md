@@ -70,7 +70,7 @@ This lab runs on a **reduced environment below the Epic's Profile B minimum**.
 | DEV-907 | MinIO feature validation | 🟢 Done | [docs/03-minio-feature-validation](docs/03-minio-feature-validation/) |
 | DEV-908 | MinIO distributed mode (resilience, healing) | ⛔ Out of scope | — |
 | DEV-909 | MinIO replication validation | 🟢 Done | [docs/05-minio-replication](docs/05-minio-replication/) |
-| DEV-910 | MinIO performance baseline | ⚪ Not started | — |
+| DEV-910 | MinIO performance baseline | 🟢 Done | [docs/06-minio-performance-baseline](docs/06-minio-performance-baseline/) |
 | DEV-911 | Silo functional validation | ⚪ Not started | — |
 | DEV-912 | S3 and client compatibility diff | ⚪ Not started | — |
 | DEV-913 | Benchmark Silo vs MinIO | ⚪ Not started | — |
@@ -79,7 +79,7 @@ This lab runs on a **reduced environment below the Epic's Profile B minimum**.
 
 **Legend:** 🟢 Done · 🟡 In Progress · ⚪ Not Started · ⛔ Out of Scope
 
-**Progress:** 4 of 11 sub-tasks complete (DEV-905, DEV-906, DEV-907, DEV-909) — 103 feature tests + 26 replication tests, 0 failures.
+**Progress:** 5 of 11 sub-tasks complete (DEV-905, DEV-906, DEV-907, DEV-909, DEV-910) — 103 feature tests + 26 replication tests + 4 benchmark profiles, 0 failures.
 
 ---
 
@@ -105,9 +105,12 @@ This lab runs on a **reduced environment below the Epic's Profile B minimum**.
 │   ├── 03-minio-feature-validation/  DEV-907 — S3 API + features
 │   │   ├── README.md
 │   │   └── evidence/
-│   └── 05-minio-replication/         DEV-909 — replication validation
+│   ├── 05-minio-replication/         DEV-909 — replication validation
+│   │   ├── README.md
+│   │   ├── REPLICATION-RUNBOOK.md    Operator runbook
+│   │   └── evidence/
+│   └── 06-minio-performance-baseline/  DEV-910 — warp + fio benchmarks
 │       ├── README.md
-│       ├── REPLICATION-RUNBOOK.md    Operator runbook
 │       └── evidence/
 ├── .env.example                      Placeholder env template (safe to commit)
 ├── .env.target                       Target MinIO credentials (git-ignored)
@@ -198,6 +201,25 @@ docker compose --env-file .env.target -f compose/minio-target.yml up -d
 ```
 
 **Total: 26 tests across bucket, batch, and site replication.** See the [Replication Runbook](docs/05-minio-replication/REPLICATION-RUNBOOK.md) for operational details.
+
+---
+
+## Run the Performance Baseline (DEV-910)
+
+```bash
+# Install fio for raw-disk baseline
+sudo apt install -y fio
+
+# Run the write-side warp profiles (small-put, large-put, multipart-put, versioned)
+./scripts/test-benchmark-local.sh
+
+# Raw disk baseline
+sudo fio --name=seqwrite --filename=/data/fio-test.bin --size=2G \
+  --rw=write --bs=1M --direct=1 --ioengine=libaio --iodepth=16 \
+  --runtime=30 --time_based --group_reporting
+```
+
+**Results:** see [docs/06-minio-performance-baseline/README.md](docs/06-minio-performance-baseline/README.md). Key figures on this lab's HDD: ~30 MiB/s seq write, ~68 MiB/s seq read, 244 IOPS random 4K. MinIO reaches ~50% of raw disk on large sequential writes.
 
 ---
 
