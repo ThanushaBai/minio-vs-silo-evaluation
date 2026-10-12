@@ -1,0 +1,45 @@
+
+--- 0. Cleanup previous state ---
+
+--- 1. Create source + target buckets with versioning ---
+PASS  Source versioning enabled                                enabled
+PASS  Target versioning enabled                                enabled
+
+--- 2. Enable one-way replication (source -> target) ---
+  Replication configuration rule applied to source/repl-test successfully.
+PASS  Replication rule added                                   1
+
+--- 3. Upload single object ---
+PASS  Object replicated to target                              1
+
+--- 4. Versioned data replication ---
+PASS  Version count matches (source=target)                    3
+
+--- 5. Delete marker replication ---
+PASS  Delete marker replicated                                 1
+
+--- 6. Tagged object replication ---
+PASS  Tags replicated (2 tags)                                 2
+
+--- 7. Metadata replication ---
+PASS  Metadata replicated (>=2 keys)                           1
+
+--- 8. Existing-object replication ---
+  Triggering resync for existing objects...
+PASS  Existing object replicated                               1
+
+--- 9. Replication status ---
+PASS  Replication status retrievable                           1
+
+--- 10. Replication backlog ---
+PASS  Replication backlog retrievable                          1
+
+--- 11. Manifest comparison (source vs target) ---
+PASS  Object counts match                                      2
+
+--- 12. Cleanup ---
+PASS  Cleanup complete                                         1
+
+==========================================
+  Bucket replication:  PASS=13  FAIL=0
+==========================================
