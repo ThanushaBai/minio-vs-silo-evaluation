@@ -1,0 +1,35 @@
+seqread: (g=0): rw=read, bs=(R) 1024KiB-1024KiB, (W) 1024KiB-1024KiB, (T) 1024KiB-1024KiB, ioengine=libaio, iodepth=16
+fio-3.41
+Starting 1 process
+
+seqread: (groupid=0, jobs=1): err= 0: pid=141351: Mon Oct 12 22:53:06 2026
+  read: IOPS=68, BW=68.1MiB/s (71.4MB/s)(2071MiB/30431msec)
+    slat (usec): min=31, max=7046, avg=118.21, stdev=260.23
+    clat (nsec): min=516, max=1256.0M, avg=234725103.80, stdev=275495968.88
+     lat (usec): min=36, max=1256.1k, avg=234843.31, stdev=275557.12
+    clat percentiles (nsec):
+     |  1.00th=[       524],  5.00th=[       532], 10.00th=[       540],
+     | 20.00th=[       572], 30.00th=[       740], 40.00th=[      2960],
+     | 50.00th=[     44800], 60.00th=[ 392167424], 70.00th=[ 471859200],
+     | 80.00th=[ 522190848], 90.00th=[ 583008256], 95.00th=[ 650117120],
+     | 99.00th=[ 960495616], 99.50th=[1010827264], 99.90th=[1182793728],
+     | 99.95th=[1233125376], 99.99th=[1249902592]
+   bw (  KiB/s): min= 6119, max=2379113, per=100.00%, avg=70021.28, stdev=303241.39, samples=60
+   iops        : min=    5, max= 2323, avg=67.80, stdev=296.16, samples=60
+  lat (nsec)   : 750=30.23%, 1000=2.61%
+  lat (usec)   : 2=6.23%, 4=1.98%, 10=1.06%, 20=0.05%, 50=9.32%
+  lat (usec)   : 100=2.80%, 250=0.43%, 500=0.48%, 750=0.05%
+  lat (msec)   : 100=0.14%, 250=0.43%, 500=19.07%, 750=23.47%, 1000=1.06%
+  lat (msec)   : 2000=0.58%
+  cpu          : usr=0.10%, sys=0.94%, ctx=908, majf=0, minf=4107
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.2%, 8=0.4%, 16=99.3%, 32=0.0%, >=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.1%, 32=0.0%, 64=0.0%, >=64=0.0%
+     issued rwts: total=2071,0,0,0 short=0,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=16
+
+Run status group 0 (all jobs):
+   READ: bw=68.1MiB/s (71.4MB/s), 68.1MiB/s-68.1MiB/s (71.4MB/s-71.4MB/s), io=2071MiB (2172MB), run=30431-30431msec
+
+Disk stats (read/write):
+  sdb: ios=1876/208, sectors=1892576/7000, merge=0/667, ticks=963507/111559, in_queue=1092077, util=95.24%
