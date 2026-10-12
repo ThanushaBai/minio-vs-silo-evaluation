@@ -69,7 +69,7 @@ This lab runs on a **reduced environment below the Epic's Profile B minimum**.
 | DEV-906 | Seed test data + verification toolkit | 🟢 Done | [docs/02-test-data-and-verification](docs/02-test-data-and-verification/) |
 | DEV-907 | MinIO feature validation | 🟢 Done | [docs/03-minio-feature-validation](docs/03-minio-feature-validation/) |
 | DEV-908 | MinIO distributed mode (resilience, healing) | ⛔ Out of scope | — |
-| DEV-909 | MinIO replication validation | ⚪ Not started | — |
+| DEV-909 | MinIO replication validation | 🟢 Done | [docs/05-minio-replication](docs/05-minio-replication/) |
 | DEV-910 | MinIO performance baseline | ⚪ Not started | — |
 | DEV-911 | Silo functional validation | ⚪ Not started | — |
 | DEV-912 | S3 and client compatibility diff | ⚪ Not started | — |
@@ -79,7 +79,7 @@ This lab runs on a **reduced environment below the Epic's Profile B minimum**.
 
 **Legend:** 🟢 Done · 🟡 In Progress · ⚪ Not Started · ⛔ Out of Scope
 
-**Progress:** 3 of 11 sub-tasks complete (DEV-905, DEV-906, DEV-907) — 103 feature tests, 0 failures.
+**Progress:** 4 of 11 sub-tasks complete (DEV-905, DEV-906, DEV-907, DEV-909) — 103 feature tests + 26 replication tests, 0 failures.
 
 ---
 
@@ -88,7 +88,8 @@ This lab runs on a **reduced environment below the Epic's Profile B minimum**.
 ```
 .
 ├── compose/                          Docker Compose files
-│   └── minio.yml                     Single-node MinIO lab (4 drives)
+│   ├── minio.yml                     Single-node MinIO (source)
+│   └── minio-target.yml              Second MinIO instance (replication target)
 ├── configs/                          TLS, nginx, prometheus configs (planned)
 ├── scripts/                          up / down / reset / lab-check / seed-* / manifest-* / test-*
 ├── manifests/                        Generated manifest CSVs (baseline, comparisons)
@@ -101,10 +102,15 @@ This lab runs on a **reduced environment below the Epic's Profile B minimum**.
 │   ├── 02-test-data-and-verification/  DEV-906 — seed data + toolkit
 │   │   ├── README.md
 │   │   └── evidence/
-│   └── 03-minio-feature-validation/  DEV-907 — S3 API + features
+│   ├── 03-minio-feature-validation/  DEV-907 — S3 API + features
+│   │   ├── README.md
+│   │   └── evidence/
+│   └── 05-minio-replication/         DEV-909 — replication validation
 │       ├── README.md
+│       ├── REPLICATION-RUNBOOK.md    Operator runbook
 │       └── evidence/
 ├── .env.example                      Placeholder env template (safe to commit)
+├── .env.target                       Target MinIO credentials (git-ignored)
 ├── .gitignore                        Excludes .env, logs, data
 └── README.md                         This file
 ```
@@ -179,13 +185,29 @@ curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:9000/minio/health/live
 
 ---
 
+## Run the Replication Validation (DEV-909)
+
+```bash
+# Start target MinIO first
+docker compose --env-file .env.target -f compose/minio-target.yml up -d
+
+# Then run the replication tests
+./scripts/test-replication-bucket.sh          # 13 tests — bucket replication
+./scripts/test-replication-failure.sh         # 7 tests — failure scenarios + lag
+./scripts/test-replication-batch-site.sh      # 6 tests — batch replication + site N/A
+```
+
+**Total: 26 tests across bucket, batch, and site replication.** See the [Replication Runbook](docs/05-minio-replication/REPLICATION-RUNBOOK.md) for operational details.
+
+---
+
 ## Security
 
-- **No secrets committed.** `.env` is git-ignored; only `.env.example` is tracked.
+- **No secrets committed.** `.env` and `.env.target` are git-ignored; only `.env.example` is tracked.
 - **Pre-commit hook:** [`gitleaks`](https://github.com/gitleaks/gitleaks) v8.16.0 blocks commits containing secrets.
 - **GitHub Secret Scanning** and **Push Protection** are enabled on this repository.
 - **A test commit with a fake AWS key was blocked** — evidence in [`docs/01-setup/evidence/gitleaks-test.txt`](docs/01-setup/evidence/gitleaks-test.txt).
-- **Service-account secrets** in evidence are redacted before commit.
+- **Service-account and password leaks** in evidence are redacted before commit.
 
 ---
 
