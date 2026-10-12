@@ -1,0 +1,46 @@
+
+=== Profile: small-put ===
+  --- Run 1 ---
+    run 1 done
+  --- Run 2 ---
+    run 2 done
+  --- Run 3 ---
+    run 3 done
+
+=== Profile: large-put ===
+  --- Run 1 ---
+    run 1 done
+  --- Run 2 ---
+    run 2 done
+  --- Run 3 ---
+    run 3 done
+
+=== Profile: multipart-put ===
+  --- Run 1 ---
+    run 1 done
+  --- Run 2 ---
+    run 2 done
+  --- Run 3 ---
+    run 3 done
+
+=== Profile: versioned ===
+  --- Run 1 ---
+    run 1 done
+  --- Run 2 ---
+    run 2 done
+  --- Run 3 ---
+    run 3 done
+----------------------------------------
+
+=== Session 10A complete ===
+total 44
+drwxrwxr-x 2 ThanushaBai ThanushaBai 4096 Oct 12 21:47 .
+drwxrwxr-x 3 ThanushaBai ThanushaBai 4096 Oct 12 21:35 ..
+-rw-rw-r-- 1 ThanushaBai ThanushaBai 1263 Oct 12 22:40 large-put.txt
+-rw-rw-r-- 1 ThanushaBai ThanushaBai  492 Oct 12 22:05 mixed.txt
+-rw-rw-r-- 1 ThanushaBai ThanushaBai  609 Oct 12 22:40 multipart-put.txt
+-rw-rw-r-- 1 ThanushaBai ThanushaBai  450 Oct 12 22:05 small-delete.txt
+-rw-rw-r-- 1 ThanushaBai ThanushaBai   67 Oct 12 22:24 small-get.txt
+-rw-rw-r-- 1 ThanushaBai ThanushaBai  442 Oct 12 22:05 small-list.txt
+-rw-rw-r-- 1 ThanushaBai ThanushaBai 1260 Oct 12 22:39 small-put.txt
+-rw-rw-r-- 1 ThanushaBai ThanushaBai 6250 Oct 12 22:42 versioned.txt

@@ -1,0 +1,45 @@
+########## Profile: small-put  Run: 1 ##########
+cmd: /warp put --obj.size 10KiB
+
+
+Report: PUT. Concurrency: 8. Ran: 18s
+ * Average: 0.17 MiB/s, 17.22 obj/s
+ * Reqs: Avg: 550.6ms, 50%: 536.3ms, 90%: 758.0ms, 99%: 944.6ms, Fastest: 138.7ms, Slowest: 1119.7ms, StdDev: 148.8ms
+
+Throughput, split into 18 x 1s:
+ * Fastest: 222.4KiB/s, 22.24 obj/s
+ * 50% Median: 185.8KiB/s, 18.58 obj/s
+ * Slowest: 99.9KiB/s, 9.99 obj/s
+
+
+
+########## Profile: small-put  Run: 2 ##########
+cmd: /warp put --obj.size 10KiB
+
+
+Report: PUT. Concurrency: 8. Ran: 17s
+ * Average: 0.42 MiB/s, 42.96 obj/s
+ * Reqs: Avg: 192.9ms, 50%: 150.8ms, 90%: 310.0ms, 99%: 616.8ms, Fastest: 43.2ms, Slowest: 1103.0ms, StdDev: 112.0ms
+
+Throughput, split into 17 x 1s:
+ * Fastest: 591.3KiB/s, 59.13 obj/s
+ * 50% Median: 455.1KiB/s, 45.51 obj/s
+ * Slowest: 208.0KiB/s, 20.80 obj/s
+
+
+
+########## Profile: small-put  Run: 3 ##########
+cmd: /warp put --obj.size 10KiB
+
+
+Report: PUT. Concurrency: 8. Ran: 17s
+ * Average: 0.37 MiB/s, 38.08 obj/s
+ * Reqs: Avg: 190.8ms, 50%: 155.8ms, 90%: 327.1ms, 99%: 843.9ms, Fastest: 60.6ms, Slowest: 1423.1ms, StdDev: 136.4ms
+
+Throughput, split into 17 x 1s:
+ * Fastest: 532.4KiB/s, 53.24 obj/s
+ * 50% Median: 421.2KiB/s, 42.12 obj/s
+ * Slowest: 57.1KiB/s, 5.71 obj/s
+
+
+

@@ -1,0 +1,21 @@
+########## Profile: multipart-put  Run: 1 ##########
+cmd: /warp multipart-put --obj.size 32MiB --part.size 8MiB
+
+Incorrect Usage: flag provided but not defined: -obj.size
+
+(error: warp exited non-zero)
+
+########## Profile: multipart-put  Run: 2 ##########
+cmd: /warp multipart-put --obj.size 32MiB --part.size 8MiB
+
+Incorrect Usage: flag provided but not defined: -obj.size
+
+(error: warp exited non-zero)
+
+########## Profile: multipart-put  Run: 3 ##########
+cmd: /warp multipart-put --obj.size 32MiB --part.size 8MiB
+
+Incorrect Usage: flag provided but not defined: -obj.size
+
+(error: warp exited non-zero)
+
