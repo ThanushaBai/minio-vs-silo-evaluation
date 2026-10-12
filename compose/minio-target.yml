@@ -1,0 +1,42 @@
+# Target MinIO for replication testing (DEV-909)
+# Runs as a SEPARATE Compose project from the source.
+# Ports 9100 (S3) / 9101 (Console) to avoid collision with source on 9000/9001.
+
+name: minio-target
+
+services:
+  minio-target:
+    image: ${MINIO_IMAGE}:${MINIO_TAG}
+    container_name: minio-target
+    hostname: minio-target
+    command: server /data1 /data2 /data3 /data4 --console-address ":9001"
+    ports:
+      - "0.0.0.0:9200:9000"
+      - "0.0.0.0:9201:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_UPDATE: "off"
+    volumes:
+      - /data/minio-target/data1:/data1
+      - /data/minio-target/data2:/data2
+      - /data/minio-target/data3:/data3
+      - /data/minio-target/data4:/data4
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
+          memory: 1024M
+    restart: unless-stopped
+    networks:
+      - minio-lab_minio-net
+
+networks:
+  minio-lab_minio-net:
+    external: true
