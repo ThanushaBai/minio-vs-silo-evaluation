@@ -1,0 +1,32 @@
+
+--- Part A: Batch replication ---
+
+--- A1. Create source bucket with 10 objects ---
+PASS  Source has 10 objects                                    10
+
+--- A2. Create target bucket (no replication rule yet) ---
+PASS  Target starts empty                                      0
+
+--- A3. Write batch job YAML into mounted path ---
+PASS  Batch job YAML written                                   1
+
+--- A4. Start batch job (mc batch start source JOBFILE) ---
+  Successfully started 'replicate' job `replicate-YehB7x5BC7xjjbW9HMyuaU:-1` on '2026-10-12 15:28:08.593198802 +0000 UTC'
+PASS  Batch job started                                        1
+
+--- A5. Check batch job status ---
+PASS  Batch job replicated objects (>=10)                      1
+  Final target count: 10
+
+--- Part B: Site replication ---
+  Source has 20 buckets
+  Target has 2 buckets
+  Attempt output: mc: <ERROR> Unable to add sites for replication. Invalid site-replication request (only one cluster may have data when configuring site replication).
+N/A   Site replication add                                     both sites have data; MinIO requires one empty site (documented behavior)
+
+--- Cleanup ---
+PASS  Cleanup complete                                         1
+
+==========================================
+  Batch + site replication:  PASS=6  FAIL=0  N/A=1
+==========================================
