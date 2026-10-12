@@ -1,10 +1,10 @@
 === Target MinIO Setup (Session 9A) ===
-Date: 2026-10-12T18:57:03+05:30
+Date: 2026-10-12T19:00:35+05:30
 
 --- Containers ---
 NAMES          STATUS                    PORTS
-minio-target   Up 6 minutes (healthy)    0.0.0.0:9200->9000/tcp, 0.0.0.0:9201->9001/tcp
-minio          Up 23 minutes (healthy)   0.0.0.0:9000-9001->9000-9001/tcp
+minio-target   Up 10 minutes (healthy)   0.0.0.0:9200->9000/tcp, 0.0.0.0:9201->9001/tcp
+minio          Up 26 minutes (healthy)   0.0.0.0:9000-9001->9000-9001/tcp
 
 --- Network ---
 minio 172.18.0.2/16
