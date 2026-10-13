@@ -1,0 +1,41 @@
+# Silo single-node lab (DEV-911) - fork of MinIO by Pigsty
+# Runs on ports 9300 (S3) / 9301 (Console) alongside MinIO on 9000/9001.
+
+name: silo-lab
+
+services:
+  silo:
+    image: ${SILO_IMAGE}:${SILO_TAG}
+    container_name: silo
+    hostname: silo
+    command: server /data1 /data2 /data3 /data4 --console-address ":9001"
+    ports:
+      - "0.0.0.0:9300:9000"
+      - "0.0.0.0:9301:9001"
+    environment:
+      MINIO_ROOT_USER: ${SILO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${SILO_ROOT_PASSWORD}
+      MINIO_UPDATE: "off"
+    volumes:
+      - /data/silo/data1:/data1
+      - /data/silo/data2:/data2
+      - /data/silo/data3:/data3
+      - /data/silo/data4:/data4
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
+          memory: 1024M
+    restart: unless-stopped
+    networks:
+      - minio-lab_minio-net
+
+networks:
+  minio-lab_minio-net:
+    external: true
