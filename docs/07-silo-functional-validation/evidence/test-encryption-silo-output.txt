@@ -1,0 +1,30 @@
+
+--- 1. Plain upload (baseline, HTTP) ---
+PASS  Plain upload succeeds                                    1
+
+--- 2. KMS configuration check ---
+N/A   External KMS                                             no kms_master_key file present in container
+
+--- 3. SSE-S3 (server-side, MinIO-managed) ---
+N/A   SSE-S3 upload                                            no KMS / default encryption configured
+
+--- 4. SSE-C over HTTP (must be rejected by S3 spec) ---
+PASS  SSE-C over HTTP rejected (spec-compliant)                1
+PASS  SSE-C object not persisted on HTTP                       0
+
+--- 5. SSE-C over HTTPS (needs TLS) ---
+N/A   SSE-C over HTTPS                                         TLS not configured in this lab
+
+--- 6. SSE-KMS ---
+N/A   SSE-KMS encryption                                       requires external KMS service (out of lab scope)
+
+--- 7. TLS in transit ---
+PASS  HTTP endpoint reachable                                  200
+N/A   HTTPS endpoint                                           TLS not configured in this lab
+
+--- 8. Cleanup ---
+PASS  Cleanup complete                                         1
+
+==========================================
+  Encryption tests:  PASS=5  FAIL=0  N/A=5
+==========================================

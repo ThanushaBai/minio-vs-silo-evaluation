@@ -1,0 +1,48 @@
+
+--- 1. Enable versioning ---
+PASS  Versioning enabled                                       enabled
+
+--- 2. Upload 3 versions of same key ---
+PASS  3 versions stored                                        3
+
+--- 3. Current version returns v3 ---
+PASS  Current content = content v3                             content v3
+
+--- 4. Suspend versioning ---
+PASS  Versioning suspended                                     suspended
+
+--- 5. Upload while suspended (overwrites null version) ---
+PASS  Suspended upload becomes current                         content v4-suspended
+
+--- 6. Re-enable versioning ---
+PASS  Versioning re-enabled                                    enabled
+
+--- 7. Upload v5 after re-enable ---
+PASS  Current content = content v5                             content v5
+
+--- 8. Delete marker (soft delete) ---
+PASS  Object hidden after soft delete                          1
+PASS  Delete marker present in version list                    1
+
+--- 9. Undelete by removing delete marker ---
+PASS  Object restored after delete-marker removal              content v5
+
+--- 10. List versions after operations ---
+PASS  Version list shows >=4 entries                           1
+
+--- 11. Permanent delete of a specific version ---
+PASS  Version permanently deleted                              4
+
+--- 12. Restore old version (copy v1 back to current) ---
+PASS  Old version copied to new key                            1
+      Restored content: content v2
+
+--- 13. ListObjectVersions at scale (30 versions on one key) ---
+PASS  30 versions listed at scale                              30
+
+--- 14. Cleanup ---
+PASS  Bucket cleaned up                                        0
+
+==========================================
+  Versioning tests:  PASS=15  FAIL=0
+==========================================

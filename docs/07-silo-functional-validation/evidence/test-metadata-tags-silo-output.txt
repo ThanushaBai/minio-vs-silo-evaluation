@@ -1,0 +1,38 @@
+
+--- 1. User metadata (X-Amz-Meta-*) ---
+PASS  User metadata keys present (3)                           3
+
+--- 2. Object tags ---
+PASS  Object tags set (3)                                      3
+
+--- 3. Verify tag value ---
+PASS  Tag env value = test                                     test
+
+--- 4. Bucket tags ---
+PASS  Bucket tags set (2)                                      2
+
+--- 5. Update existing object tag ---
+PASS  Tag updated to critical                                  critical
+
+--- 6. Remove one tag (re-set remaining tags) ---
+PASS  Tag removed (2 remaining)                                2
+
+--- 6b. Verify 'priority' tag is gone ---
+PASS  Priority tag removed                                     0
+
+--- 7. User metadata survives tag operations ---
+PASS  Metadata still present after tag ops                     3
+
+--- 8. Server-side copy preserves metadata ---
+PASS  Copy preserves metadata (>=3 keys)                       1
+      INFO: metadata keys on copy = 4 (extra = MinIO tagging-count header)
+
+--- 9. Overwrite resets metadata (S3 semantics) ---
+PASS  Overwrite cleared old metadata                           0
+
+--- 10. Cleanup ---
+PASS  Bucket cleaned up                                        0
+
+==========================================
+  Metadata/Tag tests:  PASS=11  FAIL=0
+==========================================
