@@ -1,0 +1,93 @@
+=== Silo-Only Extras - Captured 2026-10-13T21:46:46+05:30 ===
+
+--- 1. silo healthcheck ---
+
+silo healthcheck --help:
+NAME:
+  silo healthcheck - Probe the health of a Silo server and report it as the exit code
+
+USAGE:
+  silo healthcheck [FLAGS] [CHECK]
+
+CHECK:
+  live          the process is serving requests (default); touches no external system
+  ready         live, plus KMS and etcd reachability when they are configured
+  cluster       cluster-wide write quorum across every erasure set
+  cluster-read  cluster-wide read quorum across every erasure set
+
+FLAGS:
+  --address value              probe the server bound to a specific ADDRESS:PORT, an empty ADDRESS is probed as 127.0.0.1 (default: ":9000") [$MINIO_ADDRESS]
+  --url value                  probe this base URL (http[s]://HOST:PORT) instead of deriving one from --address and the certs directory [$MINIO_HEALTHCHECK_URL]
+  --maintenance                with the cluster check only: ask whether taking this node down would lose quorum (HTTP 412 means it would)
+  --timeout value              overall probe deadline (default: 5s for live/ready, 15s for cluster checks) (default: 0s)
+  --certs-dir value, -S value  path to certs directory (default: "/tmp/.silo/certs")
+  --quiet                      disable startup and info messages
+  --anonymous                  hide sensitive information from logging
+  --json                       output logs in JSON format
+  --help, -h                   show help
+  
+EXIT CODE:
+  0 - healthy (with --maintenance: safe to take the node down)
+
+silo healthcheck live (exit code test):
+live: ok (200, 7ms)
+exit=0
+
+silo healthcheck ready:
+ready: ok (200, 8ms)
+exit=0
+
+silo healthcheck cluster:
+cluster: ok (200, 5ms)
+exit=0
+
+--- 2. mcli checksum verify (Silo-only client command) ---
+NAME:
+  mc checksum - verify object checksums
+
+USAGE:
+  mc checksum COMMAND [COMMAND FLAGS | -h] [ARGUMENTS...]
+
+COMMANDS:
+  verify  verify stored checksums against logical object data
+  
+FLAGS:
+  --config-dir value, -C value     path to configuration folder (default: "/root/.mc") [$MC_CONFIG_DIR]
+  --quiet, -q                      disable progress bar display [$MC_QUIET]
+  --disable-pager, --dp            disable mcli internal pager and print to raw stdout [$MC_DISABLE_PAGER]
+  --no-color                       disable color theme [$MC_NO_COLOR]
+  --json                           enable JSON lines formatted output [$MC_JSON]
+
+--- 3. Compare: does MinIO community have these commands? ---
+MinIO container silo/minio equivalent:
+OCI runtime exec failed: exec failed: unable to start container process: exec: "which": executable file not found in $PATH
+  (minio has no 'silo' binary - expected)
+mc: <ERROR> `checksum` is not a recognized command. Get help using `--help` flag. 
+
+--- 4. Image variant check ---
+Checking pgsty/silo Docker Hub tags for -distroless variant:
+"name":"distroless"
+"name":"RELEASE.2026-09-16T00-00-00Z-distroless"
+"name":"RELEASE.2026-09-16T00-00-00Z"
+"name":"distroless-arm64"
+"name":"RELEASE.2026-09-16T00-00-00Z-distroless-arm64"
+"name":"distroless-amd64"
+"name":"RELEASE.2026-09-16T00-00-00Z-distroless-amd64"
+"name":"RELEASE.2026-09-16T00-00-00Z-arm64"
+"name":"RELEASE.2026-09-16T00-00-00Z-amd64"
+"name":"RELEASE.2026-09-03T13-18-01Z-distroless"
+
+--- 5. Full Console check ---
+Silo Console at http://<VM-IP>:9301 - screenshot expected
+Console HTTP: 200
+
+--- 6. Silo startup banner (distinctive) ---
+Silo Object Storage Server
+Modifications: Copyright 2025-2026 PGSTY
+Version: RELEASE.2026-09-16T00-00-00Z (go1.27.1 linux/amd64)
+Docs: https://silo.pgsty.com/docs/
+
+--- 7. Container images in use ---
+silo-target   pgsty/silo:RELEASE.2026-09-16T00-00-00Z    Up 6 minutes (healthy)
+silo          pgsty/silo:RELEASE.2026-09-16T00-00-00Z    Up About an hour (healthy)
+minio         pgsty/minio:RELEASE.2026-08-04T00-00-00Z   Up About an hour (healthy)
