@@ -1,0 +1,43 @@
+
+--- 0. Cleanup ---
+
+--- 1. Create source + target buckets with versioning ---
+PASS  Source versioning enabled                                enabled
+PASS  Target versioning enabled                                enabled
+
+--- 2. Enable Silo-to-Silo one-way replication ---
+  Replication configuration rule applied to silo/silo-repl-test successfully.
+PASS  Replication rule added (Silo->Silo)                      1
+
+--- 3. Upload object ---
+PASS  Object replicated to silo-target                         1
+
+--- 4. Versioned data replication ---
+PASS  Version count matches (Silo->Silo)                       3
+
+--- 5. Delete marker replication ---
+PASS  Delete marker replicated                                 1
+
+--- 6. Tagged object replication ---
+PASS  Tags replicated (2)                                      2
+
+--- 7. Metadata replication ---
+PASS  Metadata replicated (>=2 keys)                           1
+
+--- 8. Replication status ---
+PASS  Replication status retrievable                           1
+
+--- 9. Manifest comparison ---
+PASS  Object counts match (Silo->Silo)                         2
+
+--- 10. Silo-only: mcli checksum verify ---
+PASS  mcli checksum verify works on Silo                       1
+  NO_CHECKSUM                            silo/silo-repl-test/tagged.txt?versionId=c650c11c-a4a0-4cf7-a970-78429d14e90a
+Checksum verification: 1 objects, 0 verified, 0 match, 0 mismatch, 1 no-checksum, 0 unknown, 0 skipped, 0 B read
+
+--- 11. Cleanup ---
+PASS  Cleanup complete                                         1
+
+==========================================
+  Silo-to-Silo replication:  PASS=12  FAIL=0
+==========================================
