@@ -71,7 +71,7 @@ This lab runs on a **reduced environment below the Epic's Profile B minimum**.
 | DEV-908 | MinIO distributed mode (resilience, healing) | ⛔ Out of scope | — |
 | DEV-909 | MinIO replication validation | 🟢 Done | [docs/05-minio-replication](docs/05-minio-replication/) |
 | DEV-910 | MinIO performance baseline | 🟢 Done | [docs/06-minio-performance-baseline](docs/06-minio-performance-baseline/) |
-| DEV-911 | Silo functional validation | ⚪ Not started | — |
+| DEV-911 | Silo functional validation | 🟢 Done | [docs/07-silo-functional-validation](docs/07-silo-functional-validation/) |
 | DEV-912 | S3 and client compatibility diff | ⚪ Not started | — |
 | DEV-913 | Benchmark Silo vs MinIO | ⚪ Not started | — |
 | DEV-914 | Security, licence, CVE review | ⚪ Not started | — |
@@ -79,7 +79,7 @@ This lab runs on a **reduced environment below the Epic's Profile B minimum**.
 
 **Legend:** 🟢 Done · 🟡 In Progress · ⚪ Not Started · ⛔ Out of Scope
 
-**Progress:** 5 of 11 sub-tasks complete (DEV-905, DEV-906, DEV-907, DEV-909, DEV-910) — 103 feature tests + 26 replication tests + 4 benchmark profiles, 0 failures.
+**Progress:** 6 of 11 sub-tasks complete (DEV-905, DEV-906, DEV-907, DEV-909, DEV-910, DEV-911) — 108 feature tests + 26 replication tests + 4 benchmark profiles. Silo shows 100% parity with MinIO on feature tests, plus 5 Silo-only improvements.
 
 ---
 
@@ -89,7 +89,9 @@ This lab runs on a **reduced environment below the Epic's Profile B minimum**.
 .
 ├── compose/                          Docker Compose files
 │   ├── minio.yml                     Single-node MinIO (source)
-│   └── minio-target.yml              Second MinIO instance (replication target)
+│   ├── minio-target.yml              Second MinIO instance (replication target)
+│   ├── silo.yml                      Single-node Silo
+│   └── silo-target.yml               Second Silo instance (replication target)
 ├── configs/                          TLS, nginx, prometheus configs (planned)
 ├── scripts/                          up / down / reset / lab-check / seed-* / manifest-* / test-*
 ├── manifests/                        Generated manifest CSVs (baseline, comparisons)
@@ -109,12 +111,17 @@ This lab runs on a **reduced environment below the Epic's Profile B minimum**.
 │   │   ├── README.md
 │   │   ├── REPLICATION-RUNBOOK.md    Operator runbook
 │   │   └── evidence/
-│   └── 06-minio-performance-baseline/  DEV-910 — warp + fio benchmarks
+│   ├── 06-minio-performance-baseline/  DEV-910 — warp + fio benchmarks
+│   │   ├── README.md
+│   │   └── evidence/
+│   └── 07-silo-functional-validation/  DEV-911 — Silo vs MinIO side-by-side
 │       ├── README.md
 │       └── evidence/
 ├── .env.example                      Placeholder env template (safe to commit)
 ├── .env.target                       Target MinIO credentials (git-ignored)
-├── .gitignore                        Excludes .env, logs, data
+├── .env.silo                         Silo credentials (git-ignored)
+├── .env.silo-target                  Silo target credentials (git-ignored)
+├── .gitignore                        Excludes .env*, logs, data, sensitive compose
 └── README.md                         This file
 ```
 
@@ -223,9 +230,36 @@ sudo fio --name=seqwrite --filename=/data/fio-test.bin --size=2G \
 
 ---
 
+## Validate Silo Parity (DEV-911)
+
+Runs the same feature and replication test suites against Silo instead of MinIO, then compares.
+
+```bash
+# Start Silo single-node
+docker compose --env-file .env.silo -f compose/silo.yml up -d
+
+# Run the core S3 test suite against Silo
+./scripts/test-core-s3-silo.sh
+
+# Run all remaining feature test suites against Silo
+./scripts/run-all-silo-tests.sh
+
+# Start Silo target for Silo-to-Silo replication
+docker compose --env-file .env.silo-target -f compose/silo-target.yml up -d
+
+# Run Silo-to-Silo replication tests
+./scripts/test-replication-bucket-silo.sh
+```
+
+**Result:** Silo passes 108/108 feature tests and 12/12 replication tests — **100% parity with MinIO** in single-node mode. 5 Silo-only improvements identified (native `silo healthcheck`, `mcli checksum verify`, `-distroless` image variant, full Console, distinctive startup banner). Cluster resilience testing could not be performed (single-node lab).
+
+See [docs/07-silo-functional-validation/README.md](docs/07-silo-functional-validation/README.md) for the full feature matrix.
+
+---
+
 ## Security
 
-- **No secrets committed.** `.env` and `.env.target` are git-ignored; only `.env.example` is tracked.
+- **No secrets committed.** `.env*` files are git-ignored; only `.env.example` is tracked. Sensitive compose files (`compose/silo-target.yml`) are also git-ignored.
 - **Pre-commit hook:** [`gitleaks`](https://github.com/gitleaks/gitleaks) v8.16.0 blocks commits containing secrets.
 - **GitHub Secret Scanning** and **Push Protection** are enabled on this repository.
 - **A test commit with a fake AWS key was blocked** — evidence in [`docs/01-setup/evidence/gitleaks-test.txt`](docs/01-setup/evidence/gitleaks-test.txt).
