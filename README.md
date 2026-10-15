@@ -72,14 +72,14 @@ This lab runs on a **reduced environment below the Epic's Profile B minimum**.
 | DEV-909 | MinIO replication validation | 🟢 Done | [docs/05-minio-replication](docs/05-minio-replication/) |
 | DEV-910 | MinIO performance baseline | 🟢 Done | [docs/06-minio-performance-baseline](docs/06-minio-performance-baseline/) |
 | DEV-911 | Silo functional validation | 🟢 Done | [docs/07-silo-functional-validation](docs/07-silo-functional-validation/) |
-| DEV-912 | S3 and client compatibility diff | ⚪ Not started | — |
+| DEV-912 | S3 and client compatibility diff | 🟢 Done | [docs/08-compatibility-diff](docs/08-compatibility-diff/) |
 | DEV-913 | Benchmark Silo vs MinIO | ⚪ Not started | — |
 | DEV-914 | Security, licence, CVE review | ⚪ Not started | — |
 | DEV-915 | Capability matrix + final report | ⚪ Not started | — |
 
 **Legend:** 🟢 Done · 🟡 In Progress · ⚪ Not Started · ⛔ Out of Scope
 
-**Progress:** 6 of 11 sub-tasks complete (DEV-905, DEV-906, DEV-907, DEV-909, DEV-910, DEV-911) — 108 feature tests + 26 replication tests + 4 benchmark profiles. Silo shows 100% parity with MinIO on feature tests, plus 5 Silo-only improvements.
+**Progress:** 7 of 11 sub-tasks complete (DEV-905, DEV-906, DEV-907, DEV-909, DEV-910, DEV-911, DEV-912) — 108 feature tests + 26 replication tests + 4 benchmark profiles. Silo and MinIO are byte-for-byte identical at the S3 API, SDK, and error level (132/134 Prometheus metrics shared).
 
 ---
 
@@ -114,8 +114,12 @@ This lab runs on a **reduced environment below the Epic's Profile B minimum**.
 │   ├── 06-minio-performance-baseline/  DEV-910 — warp + fio benchmarks
 │   │   ├── README.md
 │   │   └── evidence/
-│   └── 07-silo-functional-validation/  DEV-911 — Silo vs MinIO side-by-side
+│   ├── 07-silo-functional-validation/  DEV-911 — Silo vs MinIO side-by-side
+│   │   ├── README.md
+│   │   └── evidence/
+│   └── 08-compatibility-diff/        DEV-912 — edge cases, O01-O08, metrics
 │       ├── README.md
+│       ├── O01-O08-DECISIONS.md
 │       └── evidence/
 ├── .env.example                      Placeholder env template (safe to commit)
 ├── .env.target                       Target MinIO credentials (git-ignored)
@@ -254,6 +258,21 @@ docker compose --env-file .env.silo-target -f compose/silo-target.yml up -d
 **Result:** Silo passes 108/108 feature tests and 12/12 replication tests — **100% parity with MinIO** in single-node mode. 5 Silo-only improvements identified (native `silo healthcheck`, `mcli checksum verify`, `-distroless` image variant, full Console, distinctive startup banner). Cluster resilience testing could not be performed (single-node lab).
 
 See [docs/07-silo-functional-validation/README.md](docs/07-silo-functional-validation/README.md) for the full feature matrix.
+
+---
+
+## Run the Compatibility Diff (DEV-912)
+
+Compares edge-case behaviour, error responses, and Prometheus metrics between MinIO and Silo.
+
+```bash
+# Both MinIO and Silo must be running
+./scripts/test-edge-cases.sh
+```
+
+**Result:** Edge-case behaviour is identical between MinIO and Silo. Error XML bodies for `AccessDenied` are **byte-for-byte identical** (only `RequestId` differs). HTTP status codes matched across all unauth probes. 132 of 134 Prometheus metric names are shared; Silo adds 2 (MRF replication tracking) and drops 2 (batch replicate counters). O01–O08 decisions written up in [docs/08-compatibility-diff/O01-O08-DECISIONS.md](docs/08-compatibility-diff/O01-O08-DECISIONS.md) — 5 conditions apply and pass, 3 are N/A.
+
+See [docs/08-compatibility-diff/README.md](docs/08-compatibility-diff/README.md) for full details.
 
 ---
 
