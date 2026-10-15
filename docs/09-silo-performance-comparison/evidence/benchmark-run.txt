@@ -1,0 +1,39 @@
+
+=== Profile: small-put ===
+  --- Run 1 ---
+    run 1 done
+  --- Run 2 ---
+    run 2 done
+  --- Run 3 ---
+    run 3 done
+
+=== Profile: large-put ===
+  --- Run 1 ---
+    run 1 done
+  --- Run 2 ---
+    run 2 done
+  --- Run 3 ---
+    run 3 done
+
+=== Profile: versioned ===
+  --- Run 1 ---
+    run 1 done
+  --- Run 2 ---
+    run 2 done
+  --- Run 3 ---
+    run 3 done
+
+=== Container stats (Silo) ===
+=== Container stats snapshot ===
+Date: 2026-10-15T20:01:40+05:30
+NAME      CPU %     MEM USAGE / LIMIT   MEM %
+silo      0.00%     571.1MiB / 1GiB     55.77%
+----------------------------------------
+
+=== Silo benchmark complete ===
+total 24
+drwxrwxr-x 2 ThanushaBai ThanushaBai 4096 Oct 15 20:00 .
+drwxrwxr-x 3 ThanushaBai ThanushaBai 4096 Oct 15 20:01 ..
+-rw-rw-r-- 1 ThanushaBai ThanushaBai 1262 Oct 15 20:00 large-put.txt
+-rw-rw-r-- 1 ThanushaBai ThanushaBai 1264 Oct 15 19:58 small-put.txt
+-rw-rw-r-- 1 ThanushaBai ThanushaBai 6252 Oct 15 20:01 versioned.txt

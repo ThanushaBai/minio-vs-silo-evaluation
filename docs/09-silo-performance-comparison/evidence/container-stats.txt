@@ -1,0 +1,4 @@
+=== Container stats snapshot ===
+Date: 2026-10-15T20:01:40+05:30
+NAME      CPU %     MEM USAGE / LIMIT   MEM %
+silo      0.00%     571.1MiB / 1GiB     55.77%
