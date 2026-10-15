@@ -5,6 +5,8 @@
 **Repo Owner:** ThanushaBai
 **Started:** 2026-10-06
 
+> **📋 Final verdict:** **GO-WITH-CONDITIONS.** Silo is functionally the correct replacement for the last open-source MinIO — 100% feature parity, byte-identical API, faster on every benchmark, and more secure. See the [evaluation report](docs/11-evaluation-report/README.md) for the executive summary and the [capability matrix](docs/11-evaluation-report/CAPABILITY-MATRIX.md) for the full comparison.
+
 ---
 
 ## Purpose
@@ -75,11 +77,11 @@ This lab runs on a **reduced environment below the Epic's Profile B minimum**.
 | DEV-912 | S3 and client compatibility diff | 🟢 Done | [docs/08-compatibility-diff](docs/08-compatibility-diff/) |
 | DEV-913 | Benchmark Silo vs MinIO | 🟢 Done | [docs/09-silo-performance-comparison](docs/09-silo-performance-comparison/) |
 | DEV-914 | Security, licence, CVE review | 🟢 Done | [docs/10-security-licence-review](docs/10-security-licence-review/) |
-| DEV-915 | Capability matrix + final report | ⚪ Not started | — |
+| DEV-915 | Capability matrix + final report | 🟢 Done | [docs/11-evaluation-report](docs/11-evaluation-report/) |
 
 **Legend:** 🟢 Done · 🟡 In Progress · ⚪ Not Started · ⛔ Out of Scope
 
-**Progress:** 9 of 11 sub-tasks complete (DEV-905, DEV-906, DEV-907, DEV-909, DEV-910, DEV-911, DEV-912, DEV-913, DEV-914). Silo is functionally identical to MinIO, up to **+400% faster** on small-object PUT, more secure (patched CVEs MinIO refused to fix), and has a documented fallback plan.
+**Progress:** 10 of 11 sub-tasks complete (all except DEV-908 which is out of scope). **Recommendation: GO-WITH-CONDITIONS.** Silo is functionally the correct replacement — 100% feature parity, byte-identical API, faster on every benchmark, and more secure (patched CVEs MinIO refused).
 
 ---
 
@@ -124,9 +126,12 @@ This lab runs on a **reduced environment below the Epic's Profile B minimum**.
 │   ├── 09-silo-performance-comparison/  DEV-913 — Silo benchmark vs MinIO
 │   │   ├── README.md
 │   │   └── evidence/
-│   └── 10-security-licence-review/   DEV-914 — CVE + licence + maintenance
-│       ├── README.md
-│       └── evidence/
+│   ├── 10-security-licence-review/   DEV-914 — CVE + licence + maintenance
+│   │   ├── README.md
+│   │   └── evidence/
+│   └── 11-evaluation-report/         DEV-915 — final report + recommendation
+│       ├── README.md                 Executive summary + recommendation
+│       └── CAPABILITY-MATRIX.md      Full feature-by-feature matrix
 ├── .env.example                      Placeholder env template (safe to commit)
 ├── .env.target                       Target MinIO credentials (git-ignored)
 ├── .env.silo                         Silo credentials (git-ignored)
@@ -309,6 +314,22 @@ Reviewed in [docs/10-security-licence-review/README.md](docs/10-security-licence
 
 ---
 
+## Final Evaluation Report (DEV-915)
+
+The [evaluation report](docs/11-evaluation-report/README.md) and the [capability matrix](docs/11-evaluation-report/CAPABILITY-MATRIX.md) consolidate the whole Epic into a single reference for decision-makers.
+
+**Recommendation: GO-WITH-CONDITIONS.**
+
+Silo is functionally the correct replacement for the last open-source MinIO. The conditions are operational, not technical:
+
+1. Complete the AGPL-3.0 compliance review before any commercial use.
+2. Validate multi-node behavior on proper hardware before distributed deployment.
+3. Formalize the fallback plan (documented in DEV-914).
+4. Configure production TLS and KMS for any non-lab deployment.
+5. Enable image signature verification and vulnerability scanning in the production pipeline.
+
+---
+
 ## Security
 
 - **No secrets committed.** `.env*` files are git-ignored; only `.env.example` is tracked. Sensitive compose files (`compose/silo-target.yml`) are also git-ignored.
@@ -344,3 +365,4 @@ Both MinIO and Silo are licensed under **AGPL-3.0**. Full review in [DEV-914](do
 - **Silo upstream:** https://github.com/pgsty/silo
 - **Silo docs:** https://silo.pgsty.com/
 - **Silo compatibility (O01–O08):** https://silo.pgsty.com/compatibility/
+- **Final evaluation report:** [docs/11-evaluation-report/README.md](docs/11-evaluation-report/README.md)
