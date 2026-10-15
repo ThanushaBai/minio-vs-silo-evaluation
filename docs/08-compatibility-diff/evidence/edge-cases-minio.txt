@@ -1,0 +1,30 @@
+=== Edge-case tests against minio ===
+Endpoint: http://minio:9000
+Date: 2026-10-14T20:23:55+05:30
+
+=== 1. Basic PUT/DELETE works ===
+  After PUT, object exists: 1
+=== 2. Batch delete 3 keys in one command ===
+  Objects before: 4, after: 1
+=== 3. Bulk delete 50 objects ===
+  Bulk objects created: 50
+  After recursive delete: 0 bulk objects remain
+=== 4. Error response for missing bucket (unauthenticated) ===
+  Response body: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessDenied</Code><Message>Access Denied.</Message><BucketName>nonexistent-bucket-xyz</BucketName><Resource>/nonexistent-bucket-xyz/</Resource><RequestId>18DE6D270B792BEA</RequestId><HostId>dd9025bab4ad464b049177c95eb6ebf374d3b3fd1af9251148b658df7ac2e3e8</HostId></Error>
+=== 5. Error response for missing object (unauthenticated) ===
+  Response body: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessDenied</Code><Message>Access Denied.</Message><Key>nonexistent.txt</Key><BucketName>edge-test</BucketName><Resource>/edge-test/nonexistent.txt</Resource><RequestId>18DE6D2750EAF3D2</RequestId><HostId>dd9025bab4ad464b049177c95eb6ebf374d3b3fd1af9251148b658df7ac2e3e8</HostId></Error>
+=== 6. HTTP status codes (unauthenticated probes) ===
+  GET http://minio:9000 -> HTTP 403
+  GET http://minio:9000/edge-test/ -> HTTP 403
+  GET http://minio:9000/nonexistent-bucket/ -> HTTP 403
+  GET http://minio:9000/edge-test/nonexistent.txt -> HTTP 403
+=== 7. ACL API probe ===
+  GET ?acl -> HTTP 403
+=== 8. Conditional PUT (If-None-Match: *) probe ===
+  PUT with If-None-Match:* -> HTTP 403
+=== 9. Prometheus metrics endpoint ===
+  Metrics at /minio/v2/metrics/cluster: 258 lines
+
+=== End ===

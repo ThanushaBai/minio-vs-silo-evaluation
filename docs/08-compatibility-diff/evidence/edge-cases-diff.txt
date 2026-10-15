@@ -1,0 +1,30 @@
+1,3c1,3
+< === Edge-case tests against minio ===
+< Endpoint: http://minio:9000
+< Date: 2026-10-14T20:23:55+05:30
+---
+> === Edge-case tests against silo ===
+> Endpoint: http://silo:9000
+> Date: 2026-10-14T20:25:30+05:30
+14c14
+< <Error><Code>AccessDenied</Code><Message>Access Denied.</Message><BucketName>nonexistent-bucket-xyz</BucketName><Resource>/nonexistent-bucket-xyz/</Resource><RequestId>18DE6D270B792BEA</RequestId><HostId>dd9025bab4ad464b049177c95eb6ebf374d3b3fd1af9251148b658df7ac2e3e8</HostId></Error>
+---
+> <Error><Code>AccessDenied</Code><Message>Access Denied.</Message><BucketName>nonexistent-bucket-xyz</BucketName><Resource>/nonexistent-bucket-xyz/</Resource><RequestId>18DE6D3E89A56773</RequestId><HostId>dd9025bab4ad464b049177c95eb6ebf374d3b3fd1af9251148b658df7ac2e3e8</HostId></Error>
+17c17
+< <Error><Code>AccessDenied</Code><Message>Access Denied.</Message><Key>nonexistent.txt</Key><BucketName>edge-test</BucketName><Resource>/edge-test/nonexistent.txt</Resource><RequestId>18DE6D2750EAF3D2</RequestId><HostId>dd9025bab4ad464b049177c95eb6ebf374d3b3fd1af9251148b658df7ac2e3e8</HostId></Error>
+---
+> <Error><Code>AccessDenied</Code><Message>Access Denied.</Message><Key>nonexistent.txt</Key><BucketName>edge-test</BucketName><Resource>/edge-test/nonexistent.txt</Resource><RequestId>18DE6D3ECF9F0B71</RequestId><HostId>dd9025bab4ad464b049177c95eb6ebf374d3b3fd1af9251148b658df7ac2e3e8</HostId></Error>
+19,22c19,22
+<   GET http://minio:9000 -> HTTP 403
+<   GET http://minio:9000/edge-test/ -> HTTP 403
+<   GET http://minio:9000/nonexistent-bucket/ -> HTTP 403
+<   GET http://minio:9000/edge-test/nonexistent.txt -> HTTP 403
+---
+>   GET http://silo:9000 -> HTTP 403
+>   GET http://silo:9000/edge-test/ -> HTTP 403
+>   GET http://silo:9000/nonexistent-bucket/ -> HTTP 403
+>   GET http://silo:9000/edge-test/nonexistent.txt -> HTTP 403
+28c28
+<   Metrics at /minio/v2/metrics/cluster: 258 lines
+---
+>   Metrics at /minio/v2/metrics/cluster: 225 lines
